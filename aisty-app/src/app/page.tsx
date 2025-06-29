@@ -1,4 +1,4 @@
-import { UserButton, SignInButton, SignOutButton, SignUpButton, SignedOut } from "@clerk/nextjs";
+import { UserButton, SignInButton, SignUpButton, SignedOut } from "@clerk/nextjs";
 
 export default function Home() {
   return (
