@@ -31,23 +31,12 @@ export default function Home() {
                 width="100%"
                 height="100%"
                 objectFit="cover"
-                filter="brightness(0.6) blur(1px)"
+                filter="brightness(1.6) blur(1px)"
                 style={{ transform: "scale(1.1)" }}
               >
                 <source src="/images/112.mp4" type="video/mp4" />
               </Video>
             </Box>
-
-            {/* グラデーションオーバーレイ - 可読性確保 */}
-            <Box
-              position="absolute"
-              top="0"
-              left="0"
-              width="100%"
-              height="100%"
-              bgGradient="linear(to-r, black 0%, rgba(0,0,0,0.8) 30%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0.7) 100%)"
-              zIndex="1"
-            />
 
             {/* 上下のグラデーション */}
             <Box
