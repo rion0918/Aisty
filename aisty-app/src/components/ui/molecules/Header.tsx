@@ -1,27 +1,44 @@
-import { Flex, Spacer } from "@chakra-ui/react";
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
-import { Button } from "@/components/ui/atoms/Button";
-import { Box } from "@/components/ui/atoms/Box";
+import { Flex, Spacer } from "@chakra-ui/react"
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
+import { Button } from "@/components/ui/atoms/Button"
+import { Box } from "@/components/ui/atoms/Box"
+import { Heading } from "@/components/ui/atoms/Heading"
 
 export const Header = () => {
   return (
-    <Flex as="header" p={4} borderBottom="1px" borderColor="gray.200" alignItems="center">
+    <Flex as="header" p={4} bg="gray.900" borderBottom="1px" borderColor="gray.700" alignItems="center" boxShadow="lg">
+      <Box>
+        <Heading as="h2" size="lg" color="white" fontWeight="bold">
+          AiSty
+        </Heading>
+      </Box>
       <Spacer />
       <Box>
         <SignedIn>
           <UserButton />
         </SignedIn>
         <SignedOut>
-          <Flex gap={2}>
+          <Flex gap={3} alignItems="center">
             <SignInButton>
-              <Button colorScheme="teal">Sign In</Button>
+              <Button
+                variant="ghost"
+                color="gray.300"
+                size="md"
+                _hover={{ bg: "gray.800", color: "white" }}
+                border="1px"
+                borderColor="gray.600"
+              >
+                ログイン
+              </Button>
             </SignInButton>
             <SignUpButton>
-              <Button variant="outline">Sign Up</Button>
+              <Button bg="teal.500" color="white" size="md" _hover={{ bg: "teal.400" }} boxShadow="md">
+                新規登録
+              </Button>
             </SignUpButton>
           </Flex>
         </SignedOut>
       </Box>
     </Flex>
-  );
-};
+  )
+}
