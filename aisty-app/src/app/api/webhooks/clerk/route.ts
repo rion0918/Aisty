@@ -1,14 +1,21 @@
-
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
 import { WebhookEvent } from '@clerk/nextjs/server'
 import { createClient } from '@supabase/supabase-js'
 
+interface ClerkUserCreatedData {
+  id: string;
+  email_addresses: { email_address: string }[];
+  first_name?: string;
+  last_name?: string;
+  image_url?: string;
+}
+
 export async function POST(req: Request) {
-  const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET
+  const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SIGNING_SECRET
 
   if (!WEBHOOK_SECRET) {
-    throw new Error('Please add CLERK_WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local')
+    throw new Error('Please add CLERK_WEBHOOK_SIGNING_SECRET from Clerk Dashboard to .env or .env.local')
   }
 
   // Get the headers
@@ -50,17 +57,17 @@ export async function POST(req: Request) {
   const eventType = evt.type;
 
   if (eventType === 'user.created') {
-    const { id, email_addresses, first_name, last_name, image_url } = evt.data;
+    const { id, email_addresses, first_name, last_name, image_url } = evt.data as ClerkUserCreatedData;
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
     const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
     const supabase = createClient(supabaseUrl, supabaseServiceRoleKey)
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('users')
       .insert([
-        { clerk_id: id, email: email_addresses[0].email_address, first_name: first_name, last_name: last_name, image_url: image_url },
+        { clerk_id: id, email: email_addresses[0].email_address, first_name, last_name, image_url },
       ])
 
     if (error) {
