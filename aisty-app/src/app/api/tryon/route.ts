@@ -11,7 +11,7 @@ async function uploadImageToSupabase(file: File): Promise<string> {
   const filePath = `tryon/${fileName}`;
 
   const { error } = await supabaseAdmin.storage
-    .from('tryon-images') // 実際のSupabaseバケット名を使用してください
+    .from('tryon-images')
     .upload(filePath, file, { cacheControl: '3600', upsert: false });
 
   if (error) {

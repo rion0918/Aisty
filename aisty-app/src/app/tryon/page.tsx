@@ -3,15 +3,41 @@
 import { Box } from "@/components/ui/atoms/Box";
 import { Heading } from "@/components/ui/atoms/Heading";
 import { Header } from "@/components/ui/molecules/Header";
-import { Container, Button, Input, VStack, Image, Text } from "@chakra-ui/react";
-import { useState } from "react";
+import { Container, Button, Input, VStack, Image, Text, Stack } from "@chakra-ui/react";
+import { useState, useRef } from "react";
 
 export default function TryOnPage() {
   const [modelImage, setModelImage] = useState<File | null>(null);
+  const [modelImagePreview, setModelImagePreview] = useState<string | null>(null);
   const [garmentImage, setGarmentImage] = useState<File | null>(null);
+  const [garmentImagePreview, setGarmentImagePreview] = useState<string | null>(null);
   const [resultImage, setResultImage] = useState<string | null>(null);
+  const modelInputRef = useRef<HTMLInputElement>(null);
+  const garmentInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleModelImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setModelImage(file);
+      setModelImagePreview(URL.createObjectURL(file));
+    } else {
+      setModelImage(null);
+      setModelImagePreview(null);
+    }
+  };
+
+  const handleGarmentImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setGarmentImage(file);
+      setGarmentImagePreview(URL.createObjectURL(file));
+    } else {
+      setGarmentImage(null);
+      setGarmentImagePreview(null);
+    }
+  };
 
   const handleTryOn = async () => {
     if (!modelImage || !garmentImage) {
@@ -57,27 +83,49 @@ export default function TryOnPage() {
       <Box as="main" minH="calc(100vh - 138px)">
         <Container maxW="container.lg" py={20}>
           <Heading as="h1" size="2xl" textAlign="center" mb={10}>
-            Virtual Try-On
+            アイスティーで着てみる
           </Heading>
 
-          <VStack gap={4} align="stretch">
-            <Box>
-              <Text mb={2}>Upload Your Photo:</Text>
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setModelImage(e.target.files ? e.target.files[0] : null)}
-              />
-            </Box>
-            <Box>
-              <Text mb={2}>Upload Garment Photo:</Text>
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setGarmentImage(e.target.files ? e.target.files[0] : null)}
-              />
-            </Box>
-            <Button onClick={handleTryOn} loading={loading} colorScheme="blue" size="lg">
+          <VStack gap={8} align="center">
+            <Stack direction={{ base: "column", md: "row" }} gap={8} mb={8}>
+              <Box flex="1" width="full">
+                <Text mb={2}>人物画像:</Text>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleModelImageChange}
+                  ref={modelInputRef}
+                  display="none"
+                />
+                <Button onClick={() => modelInputRef.current?.click()} colorScheme="teal" variant="outline" width="full">
+                  全身写真を選択
+                </Button>
+                {modelImagePreview && (
+                  <Box mt={2} p={2} borderWidth="1px" borderColor="gray.200" borderRadius="md">
+                    <Image src={modelImagePreview} alt="Model Preview" maxH="200px" objectFit="contain" />
+                  </Box>
+                )}
+              </Box>
+              <Box flex="1" width="full">
+                <Text mb={2}>衣服画像:</Text>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleGarmentImageChange}
+                  ref={garmentInputRef}
+                  display="none"
+                />
+                <Button onClick={() => garmentInputRef.current?.click()} colorScheme="teal" variant="outline" width="full">
+                  服の写真を選択
+                </Button>
+                {garmentImagePreview && (
+                  <Box mt={2} p={2} borderWidth="1px" borderColor="gray.200" borderRadius="md">
+                    <Image src={garmentImagePreview} alt="Garment Preview" maxH="200px" objectFit="contain" />
+                  </Box>
+                )}
+              </Box>
+            </Stack>
+            <Button onClick={handleTryOn} loading={loading} colorScheme="blue" size="lg" width="full" maxW="sm" mt={4}>
               Try On
             </Button>
 
