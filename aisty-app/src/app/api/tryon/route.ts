@@ -11,7 +11,7 @@ async function uploadImageToSupabase(file: File): Promise<string> {
   const filePath = `tryon/${fileName}`;
 
   const { error } = await supabaseAdmin.storage
-    .from('tryon-images') // Use your actual Supabase bucket name
+    .from('tryon-images') // 実際のSupabaseバケット名を使用してください
     .upload(filePath, file, { cacheControl: '3600', upsert: false });
 
   if (error) {
@@ -20,7 +20,7 @@ async function uploadImageToSupabase(file: File): Promise<string> {
 
   const { data: signedData, error: signError } = await supabaseAdmin.storage
     .from('tryon-images')
-    .createSignedUrl(filePath, 60); // URL valid for 60 seconds
+    .createSignedUrl(filePath, 60); // URLは60秒間有効
   if (signError || !signedData.signedUrl) {
     throw new Error(`Supabase signed URL error: ${signError?.message}`);
   }
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Both modelImage and garmentImage are required.' }, { status: 400 });
     }
 
-    // Upload images to Supabase Storage
+    // 画像をSupabaseストレージにアップロード
     const modelImageUrl = await uploadImageToSupabase(modelImageFile);
     const garmentImageUrl = await uploadImageToSupabase(garmentImageFile);
 
@@ -50,12 +50,12 @@ export async function POST(req: NextRequest) {
       "Authorization": `Bearer ${API_KEY}`,
     };
 
-    // Step 1: Send image URLs to Fashn.ai /run endpoint
+    // ステップ1: Fashn.aiの/runエンドポイントに画像URLを送信
     const runResponse = await fetch(`${BASE_URL}/run`, {
       method: 'POST',
       headers: headers,
       body: JSON.stringify({
-        model_name: "tryon-v1.6", // Or tryon-v1.5
+        model_name: "tryon-v1.6", // またはtryon-v1.5
         inputs: {
           model_image: modelImageUrl,
           garment_image: garmentImageUrl,
@@ -71,11 +71,11 @@ export async function POST(req: NextRequest) {
 
     const { id: predictionId } = await runResponse.json();
 
-    // Step 2: Poll /status/:id endpoint for result
+    // ステップ2: 結果のために/status/:idエンドポイントをポーリング
     let resultImageUrl: string | null = null;
     let status = '';
     while (status !== 'completed' && status !== 'failed' && status !== 'canceled') {
-      await new Promise(resolve => setTimeout(resolve, 3000)); // Wait 3 seconds before polling
+      await new Promise(resolve => setTimeout(resolve, 3000)); // ポーリング前に3秒待機
 
       const statusRes = await fetch(`${BASE_URL}/status/${predictionId}`, { headers });
       if (!statusRes.ok) {
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
       status = statusData.status;
 
       if (status === 'completed') {
-        resultImageUrl = statusData.output[0]; // Assuming the first output is the image URL
+        resultImageUrl = statusData.output[0]; // 最初の出力が画像URLであると仮定
       } else if (status === 'failed' || status === 'canceled') {
         console.error('Fashn.ai try-on failed or was canceled:', statusData.error);
         return NextResponse.json({ error: statusData.error || 'Try-on process failed or was canceled.' }, { status: 500 });
