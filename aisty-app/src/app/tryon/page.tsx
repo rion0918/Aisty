@@ -41,7 +41,7 @@ export default function TryOnPage() {
 
   const handleTryOn = async () => {
     if (!modelImage || !garmentImage) {
-      setError("Please select both a model image and a garment image.");
+      setError("人物と衣服の画像を両方選択してください。");
       return;
     }
 
@@ -125,7 +125,7 @@ export default function TryOnPage() {
                 )}
               </Box>
             </Stack>
-            <Button onClick={handleTryOn} loading={loading} colorScheme="blue" size="lg" width="full" maxW="sm" mt={4}>
+            <Button onClick={handleTryOn} loading={loading} loadingText="着せ替え中..." colorScheme="blue" size="lg" width="full" maxW="sm" mt={4}>
               Try On
             </Button>
 

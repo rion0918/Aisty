@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@clerk/localizations": "^3.17.2",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
