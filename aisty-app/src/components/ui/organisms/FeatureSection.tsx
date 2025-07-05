@@ -1,7 +1,9 @@
 import type React from "react"
 import { Box, Heading, SimpleGrid, VStack } from "@chakra-ui/react"
 import { Text } from "@/components/ui/atoms/Text"
-import { FcCamera, FcApproval, FcCustomerSupport } from "react-icons/fc"
+import { FcCamera } from "react-icons/fc"
+import { MdAttachMoney } from "react-icons/md"
+import { IoMdGitCompare } from "react-icons/io"
 
 type FeatureProps = {
   title: string
@@ -69,17 +71,17 @@ export const FeatureSection = () => {
         <Feature
           icon={<FcCamera />}
           title="リアルな試着体験"
-          text="高精度なAI技術により、実際に着用したような自然な試着体験を提供。サイズ感や着心地まで事前に確認できます。"
+          text="高精度なAI技術により、実際に着用したような自然な試着体験を提供。事前にご自身に合わせることが可能。"
         />
         <Feature
-          icon={<FcApproval />}
-          title="パーソナライズ提案"
-          text="あなたの体型や好みを学習し、最適なサイズとスタイルを提案。失敗のないお買い物をサポートします。"
+          icon={<IoMdGitCompare />}
+          title="比較"
+          text="色違いの衣服を簡単に比較し、最適な選択を。"
         />
         <Feature
-          icon={<FcCustomerSupport />}
-          title="安心のサポート"
-          text="専門スタッフによる丁寧なサポートと、万が一の場合の返品・交換保証で、安心してお買い物いただけます。"
+          icon={<MdAttachMoney />}
+          title="低価格で使用可能"
+          text="1着数千円から〜数万円掛かる衣服に失敗は許されない。低価格で購入ミスを防ぐ。"
         />
       </SimpleGrid>
     </Box>

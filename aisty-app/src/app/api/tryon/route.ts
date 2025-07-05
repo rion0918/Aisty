@@ -7,6 +7,7 @@ const API_KEY = process.env.FASHN_API_KEY;
 
 async function uploadImageToSupabase(file: File): Promise<string> {
   const fileExt = file.name.split('.').pop();
+  // 拡張子を取得し、ランダムなファイル名を生成
   const fileName = `${uuidv4()}.${fileExt}`;
   const filePath = `tryon/${fileName}`;
 
@@ -28,8 +29,10 @@ async function uploadImageToSupabase(file: File): Promise<string> {
 }
 
 export async function POST(req: NextRequest) {
+
+  // Fashn.aiのAPIキーが設定されているか確認
   if (!API_KEY) {
-    return NextResponse.json({ error: 'FASHN_API_KEY is not set in environment variables.' }, { status: 500 });
+    return NextResponse.json({ error: 'FASHN_API_KEY が違うので設定し直してください' }, { status: 500 });
   }
 
   try {
@@ -37,8 +40,9 @@ export async function POST(req: NextRequest) {
     const modelImageFile = formData.get('modelImage') as File | null;
     const garmentImageFile = formData.get('garmentImage') as File | null;
 
+    //バリデーションを行う
     if (!modelImageFile || !garmentImageFile) {
-      return NextResponse.json({ error: 'Both modelImage and garmentImage are required.' }, { status: 400 });
+      return NextResponse.json({ error: 'modelImage and garmentImageがどちらも必要' }, { status: 400 });
     }
 
     // 画像をSupabaseストレージにアップロード
@@ -51,6 +55,7 @@ export async function POST(req: NextRequest) {
     };
 
     // ステップ1: Fashn.aiの/runエンドポイントに画像URLを送信
+    //Fashn.aiのドキュメントを参照
     const runResponse = await fetch(`${BASE_URL}/run`, {
       method: 'POST',
       headers: headers,

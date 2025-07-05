@@ -34,7 +34,7 @@ export default function Home() {
                 filter="brightness(1.6) blur(1px)"
                 style={{ transform: "scale(1.1)" }}
               >
-                <source src="/images/112.mp4" type="video/mp4" />
+                <source src="/images/douga.mp4" type="video/mp4" />
               </Video>
             </Box>
 
@@ -70,7 +70,7 @@ export default function Home() {
                 textShadow="2px 2px 8px rgba(0,0,0,0.9)"
                 fontWeight="bold"
               >
-                服はバーチャルで着る時代、
+                衣服はバーチャルで着る時代。
                 <br />
                 <Box as="span" bgGradient="linear(to-r, teal.400, purple.400)" bgClip="text" display="inline">
                   自宅で見つけよう
@@ -86,7 +86,7 @@ export default function Home() {
               >
                 AiStyは、AI技術であなたのStyleをサポート。
                 <br />
-                実際に着てみたような試着体験で、服選びの失敗をなくし、お気に入りのスタイルを見つけましょう。
+                実際に着てみたような試着体験で、服選びの失敗をなくし、お気に入りの衣服を見つけましょう。
               </Text>
 
               <SignedOut>
@@ -191,7 +191,7 @@ export default function Home() {
           <Container maxW="container.lg">
             <VStack gap={12} textAlign="center">
               <Heading as="h2" size="xl" color="white" mb={4}>
-                実際の試着体験をご覧ください
+                使用例
               </Heading>
 
               {/* 動画デモセクション */}
@@ -258,7 +258,7 @@ export default function Home() {
               </Box>
 
               <Text fontSize="lg" color="gray.300" maxW="600px">
-                AIが生成するリアルな試着体験で、オンラインショッピングの不安を解消します。
+                AiStyで、あなたの衣服購入をサポートさせてください。
               </Text>
             </VStack>
           </Container>
@@ -267,19 +267,6 @@ export default function Home() {
         <FeatureSection />
       </Box>
       <Footer />
-
-      {/* 最適化されたCSSアニメーション */}
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-        }
-        
-        @keyframes pulse {
-          0%, 100% { opacity: 0.1; transform: scale(1); }
-          50% { opacity: 0.2; transform: scale(1.05); }
-        }
-      `}</style>
     </Box>
   )
 }
