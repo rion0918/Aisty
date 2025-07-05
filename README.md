@@ -1,104 +1,55 @@
-# Aisty App
+# Aisty - バーチャル試着
 
-Aistyは、仮想的に服を試着することで、オンラインショッピング時の服選びをサポートするサービスです。このプロジェクトは、Next.js、Chakra UI、Clerk、Supabaseを用いたモダンなWebアプリケーションとして開発されています。
+「この服、自分に似合うかな？」
 
-## プロジェクトの現状と実装された機能
+オンラインショッピングのそんな悩みを解決するのがAistyです。気になる衣服商品を、自分の写真と合成して購入前にイメージが付きやすくなります！
 
-### 1. 技術スタック
+## 🚀 技術スタック
 
-*   **フレームワーク**: Next.js (v15.3.4)
-*   **UIライブラリ**: Chakra UI (v3.21.1)
-*   **認証**: Clerk (v6.23.1)
-*   **言語**: TypeScript
-*   **データベース**: Supabase(Storage)
-*   **その他**: `react-icons` (アイコン表示)
+このアプリは、以下の技術スタックで構築されています。
 
-### 2. 主要な機能とページ
+- **Framework**: [Next.js](https://nextjs.org/)
+- **UI**: [Chakra UI](https://chakra-ui.com/)
+- **Authentication**: [Clerk](https://clerk.com/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Storage**: [Supabase Storage](https://supabase.com/docs/guides/storage)
+- **Virtual Try-on API**: [Fashn.ai](https://fashn.ai/)
+- **Icons**: `react-icons`
 
-#### a. ランディングページ (`/`)
+### 🏗️ 技術構成図
 
-ユーザーが最初に訪れる公開ページです。ユーザビリティを考慮し、以下の要素で構成されています。
+アプリ全体を図にまとめました。  
+[Excalidraw で開く](https://excalidraw.com/#json=1yHvHB8zI6ULGjSwJpfQ7,x9M59OlZtNZXd0FaqrChFg)
 
-*   **ヘッダー**: アプリケーション名と、認証状態に応じたサインイン/サインアップボタンまたはユーザープロファイルボタン（Clerkの`UserButton`）を表示します。
-*   **ヒーローセクション**: アプリケーションのキャッチコピーと簡単な説明、そして新規登録を促すCTA（Call To Action）ボタンを配置しています。既存ユーザー向けのサインインリンクも提供しています。
-*   **機能紹介セクション**: アプリケーションの主要な機能を3つのポイントに絞り、アイコンと簡潔な説明で紹介しています。
-*   **フッター**: コピーライト情報を表示します。
+## ✨ 主な機能
 
-#### b. 認証ページ (`/sign-in`, `/sign-up`)
+### 1. バーチャル試着ページ (`/tryon`)
 
-Clerkによって提供されるサインインおよびサインアップページです。ユーザーはこれらのページを通じてアプリケーションに登録・ログインできます。
+このアプリのメイン機能です！ログインしたユーザーだけがアクセスできます。
 
-#### c. TryOnページ (`/tryon`)
+- **使い方**:
+  1.  自分の全身写真（`human_image`）をアップロード
+  2.  試着したい服の画像（`garment_image`）をアップロード
+  3.  生成ボタンをクリック！
+- **裏側の仕組み**:
+  - 画像は一旦Supabase Storageにアップロードされます。
+  - その画像のURLを使って、Next.jsのAPIルート経由でFashn.ai APIを叩いています。
+  - Fashn.ai APIが頑張って試着画像を生成してくれるので、結果をポーリングして表示します。
 
-ログイン後にユーザーがリダイレクトされる保護されたページです。このページは認証済みのユーザーのみがアクセスできます。
-現在、Fashn.ai API を利用した仮想試着機能の実装を進めています。
+### 2. 認証について
 
-**仮想試着機能の概要:**
-- ユーザーは自身の写真と試着したい服の写真をアップロードできます。
-- アップロードされた画像は一時的に Supabase Storage に保存されます。
-- Supabase に保存された画像の URL を使用して Fashn.ai API の `/run` エンドポイントを呼び出し、仮想試着処理を開始します。
-- Fashn.ai API から返される結果画像は、ポーリングにより取得され、UI に表示されます。
+認証にはClerkを採用。
 
-**技術的な詳細:**
-- **Fashn.ai API**: 仮想試着のコア機能を提供します。
-- **Supabase Storage**: アップロードされたユーザー画像の一時保存に使用します。これにより、大きな画像ファイルでも API リクエストのペイロードサイズ制限を回避できます。
-- **Next.js API Route**: クライアントからの画像アップロードを受け付け、Supabase Storage へのアップロード、Fashn.ai API との連携（`/run` および `/status` エンドポイントのポーリング）をサーバーサイドで処理します。
-- **`uuid`**: Supabase Storage に画像を保存する際の一意なファイル名生成に使用します。
+- **公開ページ**: `/`, `/sign-in`, `/sign-up`
+- **保護ページ**: 上記以外の全ページ (e.g., `/tryon`)
+- **リダイレクト処理**:
+  - ログイン済みのユーザーがトップページ (`/`) にアクセスすると、自動で`/tryon`にリダイレクトされます。
+  - ロジックは `src/middleware.ts` でやっています。
 
-**セットアップに関する注意点:**
-- Supabase プロジェクトに `aisty-images` という名前のストレージバケットを作成し、適切な RLS (Row Level Security) ポリシーを設定して公開読み取りアクセスを許可する必要があります。
-- `.env.local` ファイルに `FASHN_API_KEY` を設定する必要があります。
+## 🗺️ 今後のロードマップ
 
-### 3. 認証とルーティング
+- [ ] `TryOn`ページのUI/UX改善
+- [ ] 試着履歴の実装
+- [ ] 試着結果のシェア機能
 
-*   **Clerkによる認証**: ユーザー認証にはClerkを使用しています。
-*   **環境変数**: `.env.local`ファイルを通じてClerkの公開キー、秘密キー、そして認証後のリダイレクトURL (`/tryon`) を設定しています。
-    ```
-    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=...
-    CLERK_SECRET_KEY=...
-    NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-    NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-    NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/tryon
-    NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/tryon
-    ```
-*   **ミドルウェア (`src/middleware.ts`)**: Next.jsのミドルウェアを使用して、ルーティングと認証保護を管理しています。
-    *   トップページ (`/`)、サインインページ (`/sign-in`), サインアップページ (`/sign-up`) は公開ルートとして設定されています。
-    *   それ以外のすべてのルート（例: `/tryon`）は保護されており、未認証のユーザーはアクセスできません。
-    *   ログイン済みのユーザーがトップページ (`/`) にアクセスした場合、自動的に`/tryon`ページへリダイレクトされます。
-
-### 4. Atomic Designの採用
-
-UIコンポーネントはAtomic Designの原則に基づいて構築されており、再利用性と保守性を高めています。
-
-*   **`atoms`**: 最小単位のUI要素。
-    *   `Box`, `Button`, `Heading`, `Icon`, `Image`, `Input`, `Link`, `Text`, `Label`
-*   **`molecules`**: `atoms`を組み合わせて作られた複合的なUI要素。
-    *   `Header`, `Footer`
-*   **`organisms`**: `molecules`や`atoms`を組み合わせて作られた、より複雑なセクション。
-    *   `FeatureSection`
-
-## 開発環境のセットアップ
-
-1.  **リポジトリのクローン**:
-    ```bash
-    git clone [リポジトリのURL]
-    cd Aisty/aisty-app
-    ```
-2.  **依存関係のインストール**:
-    ```bash
-    npm install
-    ```
-3.  **環境変数の設定**:
-    プロジェクトルートにある`.env.local`ファイルを、Clerkのキーとリダイレクト設定で更新してください。
-4.  **開発サーバーの起動**:
-    ```bash
-    npm run dev
-    ```
-    ブラウザで `http://localhost:3000` にアクセスしてください。
-
-## 今後の開発
-
-*   `TryOn`ページの仮想試着機能のさらなる改善と安定化。
-*   UI/UXのさらなる改善とデザインの洗練。
-*   テストの追加。
-
+何かアイデアがあれば、気軽にIssueやPull Requestを送ってください！
