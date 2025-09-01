@@ -11,6 +11,8 @@ export default function TryOnPage() {
   const [garmentImage, setGarmentImage] = useState<File | null>(null);
   const [garmentImagePreview, setGarmentImagePreview] = useState<string | null>(null);
   const [resultImage, setResultImage] = useState<string | null>(null);
+  const [predictionId, setPredictionId] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
   const modelInputRef = useRef<HTMLInputElement>(null);
   const garmentInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
@@ -47,12 +49,15 @@ export default function TryOnPage() {
     setLoading(true);
     setError(null);
     setResultImage(null);
+    setPredictionId(null);
+    setStatus(null);
 
     const formData = new FormData();
     formData.append("modelImage", modelImage);
     formData.append("garmentImage", garmentImage);
 
     try {
+      // 1) ジョブ起動: predictionId を受け取る
       const response = await fetch("/api/tryon", {
         method: "POST",
         body: formData,
@@ -64,7 +69,36 @@ export default function TryOnPage() {
       }
 
       const data = await response.json();
-      setResultImage(data.resultImageUrl);
+      const id = data.id as string;
+      setPredictionId(id);
+
+      // 2) ステータスをポーリング
+      await new Promise<void>((resolve, reject) => {
+        const interval = setInterval(async () => {
+          try {
+            const res = await fetch(`/api/tryon?id=${id}`);
+            if (!res.ok) {
+              const e = await res.json();
+              throw new Error(e.error || "Failed to get status");
+            }
+            const sdata = await res.json();
+            setStatus(sdata.status);
+
+            if (sdata.status === "completed") {
+              clearInterval(interval);
+              setResultImage(sdata.resultImageUrl ?? null);
+              resolve();
+            }
+            if (sdata.status === "failed" || sdata.status === "canceled") {
+              clearInterval(interval);
+              reject(new Error(sdata.error || `Job ${sdata.status}`));
+            }
+          } catch (err) {
+            clearInterval(interval);
+            reject(err);
+          }
+        }, 3000);
+      });
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -123,7 +157,7 @@ export default function TryOnPage() {
                 )}
               </Box>
             </Stack>
-            <Button onClick={handleTryOn} loading={loading} loadingText="着せ替え中..." colorScheme="blue" size="lg" width="full" maxW="sm" mt={4}>
+            <Button onClick={handleTryOn} isLoading={loading} loadingText="着せ替え中..." colorScheme="blue" size="lg" width="full" maxW="sm" mt={4}>
               Try On
             </Button>
 
@@ -131,6 +165,14 @@ export default function TryOnPage() {
               <Text color="red.500" mt={4}>
                 Error: {error}
               </Text>
+            )}
+
+            {status && !resultImage && (
+              <Text mt={4}>現在のステータス: {status}</Text>
+            )}
+
+            {predictionId && (
+              <Text mt={2} fontSize="sm" color="gray.500">ジョブID: {predictionId}</Text>
             )}
 
             {resultImage && (

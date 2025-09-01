@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseAdminClient';
 import { v4 as uuidv4 } from 'uuid';
 
-const BASE_URL = "https://api.fashn.ai/v1";
+const BASE_URL = 'https://api.fashn.ai/v1';
 const API_KEY = process.env.FASHN_API_KEY;
+
+export const runtime = 'nodejs';
+export const maxDuration = 60;
 
 async function uploadImageToSupabase(file: File): Promise<string> {
   const fileExt = file.name.split('.').pop();
-  // 拡張子を取得し、ランダムなファイル名を生成
   const fileName = `${uuidv4()}.${fileExt}`;
   const filePath = `tryon/${fileName}`;
 
@@ -21,18 +23,17 @@ async function uploadImageToSupabase(file: File): Promise<string> {
 
   const { data: signedData, error: signError } = await supabaseAdmin.storage
     .from('tryon-images')
-    .createSignedUrl(filePath, 60); // URLは60秒間有効
+    .createSignedUrl(filePath, 900);
   if (signError || !signedData.signedUrl) {
     throw new Error(`Supabase signed URL error: ${signError?.message}`);
   }
   return signedData.signedUrl;
 }
 
+// 非同期化: POSTはジョブ起動のみ。predictionIdを返す
 export async function POST(req: NextRequest) {
-
-  // Fashn.aiのAPIキーが設定されているか確認
   if (!API_KEY) {
-    return NextResponse.json({ error: 'FASHN_API_KEY が違うので設定し直してください' }, { status: 500 });
+    return NextResponse.json({ error: 'FASHN_API_KEY を設定してください' }, { status: 500 });
   }
 
   try {
@@ -40,27 +41,25 @@ export async function POST(req: NextRequest) {
     const modelImageFile = formData.get('modelImage') as File | null;
     const garmentImageFile = formData.get('garmentImage') as File | null;
 
-    //バリデーションを行う
     if (!modelImageFile || !garmentImageFile) {
-      return NextResponse.json({ error: 'modelImage and garmentImageがどちらも必要' }, { status: 400 });
+      return NextResponse.json({ error: 'modelImage と garmentImage が必要です' }, { status: 400 });
     }
 
-    // 画像をSupabaseストレージにアップロード
+    // Supabase にアップロードし署名URLを取得
     const modelImageUrl = await uploadImageToSupabase(modelImageFile);
     const garmentImageUrl = await uploadImageToSupabase(garmentImageFile);
 
     const headers = {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${API_KEY}`,
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${API_KEY}`,
     };
 
-    // ステップ1: Fashn.aiの/runエンドポイントに画像URLを送信
-    //Fashn.aiのドキュメントを参照
+    // Fashn.ai のジョブ起動
     const runResponse = await fetch(`${BASE_URL}/run`, {
       method: 'POST',
-      headers: headers,
+      headers,
       body: JSON.stringify({
-        model_name: "tryon-v1.6", // またはtryon-v1.5
+        model_name: 'tryon-v1.6',
         inputs: {
           model_image: modelImageUrl,
           garment_image: garmentImageUrl,
@@ -71,47 +70,50 @@ export async function POST(req: NextRequest) {
     if (!runResponse.ok) {
       const errorData = await runResponse.json();
       console.error('Fashn.ai /run error:', errorData);
-      return NextResponse.json({ error: errorData.detail || 'Failed to start try-on process with Fashn.ai.' }, { status: runResponse.status });
+      return NextResponse.json(
+        { error: errorData.detail || 'Failed to start try-on process with Fashn.ai.' },
+        { status: runResponse.status }
+      );
     }
 
     const { id: predictionId } = await runResponse.json();
-
-    // ステップ2: 結果のために/status/:idエンドポイントをポーリング
-    let resultImageUrl: string | null = null;
-    let status = '';
-    while (status !== 'completed' && status !== 'failed' && status !== 'canceled') {
-      await new Promise(resolve => setTimeout(resolve, 3000)); // ポーリング前に3秒待機
-
-      const statusRes = await fetch(`${BASE_URL}/status/${predictionId}`, { headers });
-      if (!statusRes.ok) {
-        const errorData = await statusRes.json();
-        console.error('Fashn.ai /status error:', errorData);
-        return NextResponse.json({ error: errorData.detail || 'Failed to get try-on status from Fashn.ai.' }, { status: statusRes.status });
-      }
-
-      const statusData = await statusRes.json();
-      status = statusData.status;
-
-      if (status === 'completed') {
-        resultImageUrl = statusData.output[0]; // 最初の出力が画像URLであると仮定
-      } else if (status === 'failed' || status === 'canceled') {
-        console.error('Fashn.ai try-on failed or was canceled:', statusData.error);
-        return NextResponse.json({ error: statusData.error || 'Try-on process failed or was canceled.' }, { status: 500 });
-      }
-    }
-
-    if (resultImageUrl) {
-      return NextResponse.json({ resultImageUrl });
-    } else {
-      return NextResponse.json({ error: 'No result image URL received.' }, { status: 500 });
-    }
-
+    return NextResponse.json({ id: predictionId });
   } catch (error: unknown) {
-    console.error('API Route error:', error);
-    let message = 'An unexpected error occurred.';
-    if (error instanceof Error) {
-      message = error.message;
-    }
+    console.error('API Route POST error:', error);
+    const message = error instanceof Error ? error.message : 'An unexpected error occurred.';
     return NextResponse.json({ error: message }, { status: 500 });
   }
+}
+
+// 非同期化: GETはstatusを返す。完了時は画像URLも返す
+export async function GET(req: NextRequest) {
+  if (!API_KEY) {
+    return NextResponse.json({ error: 'FASHN_API_KEY を設定してください' }, { status: 500 });
+  }
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get('id');
+  if (!id) {
+    return NextResponse.json({ error: 'id が必要です' }, { status: 400 });
+  }
+
+  const headers = { Authorization: `Bearer ${API_KEY}` };
+  const statusRes = await fetch(`${BASE_URL}/status/${id}`, { headers });
+  if (!statusRes.ok) {
+    let detail = 'Failed to get try-on status from Fashn.ai.';
+    try {
+      const err = await statusRes.json();
+      detail = err.detail || detail;
+    } catch (_) {}
+    return NextResponse.json({ error: detail }, { status: statusRes.status });
+  }
+
+  const statusData = await statusRes.json();
+  if (statusData.status === 'completed') {
+    const resultImageUrl: string | null = statusData.output?.[0] ?? null;
+    return NextResponse.json({ status: 'completed', resultImageUrl });
+  }
+  if (statusData.status === 'failed' || statusData.status === 'canceled') {
+    return NextResponse.json({ status: statusData.status, error: statusData.error || null });
+  }
+  return NextResponse.json({ status: statusData.status });
 }
