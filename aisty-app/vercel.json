@@ -3,15 +3,12 @@
     "api/tryon/**": {
       "maxDuration": 60,
       "memory": 1024,
-      "runtime": "nodejs20.x",
-      "regions": ["hnd1"]
+      "runtime": "nodejs20.x"
     },
     "api/webhooks/**": {
       "maxDuration": 60,
       "memory": 1024,
-      "runtime": "nodejs20.x",
-      "regions": ["hnd1"]
+      "runtime": "nodejs20.x"
     }
   }
 }
-

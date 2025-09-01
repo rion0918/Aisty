@@ -7,6 +7,7 @@ const API_KEY = process.env.FASHN_API_KEY;
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
+export const preferredRegion = ['hnd1'];
 
 async function uploadImageToSupabase(file: File): Promise<string> {
   const fileExt = file.name.split('.').pop();

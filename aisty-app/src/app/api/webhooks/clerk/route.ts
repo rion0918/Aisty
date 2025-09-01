@@ -80,3 +80,7 @@ export async function POST(req: Request) {
 
   return new Response('', { status: 201 })
 }
+
+export const runtime = 'nodejs'
+export const maxDuration = 60
+export const preferredRegion = ['hnd1']
