@@ -1,3 +1,5 @@
+"use client"
+
 import { Flex, HStack, Spacer } from "@chakra-ui/react"
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
 import { Button } from "@/components/ui/atoms/Button"
@@ -27,7 +29,7 @@ export const Header = () => {
         </SignedIn>
         <SignedOut>
           <Flex gap={3} alignItems="center">
-            <SignInButton>
+            <SignInButton mode="redirect">
               <Button
                 variant="ghost"
                 color="gray.300"
@@ -39,7 +41,7 @@ export const Header = () => {
                 ログイン
               </Button>
             </SignInButton>
-            <SignUpButton>
+            <SignUpButton mode="redirect">
               <Button bg="teal.500" color="white" size="md" _hover={{ bg: "teal.400" }} boxShadow="md">
                 新規登録
               </Button>
