@@ -157,7 +157,7 @@ export default function TryOnPage() {
                 )}
               </Box>
             </Stack>
-            <Button onClick={handleTryOn} loading={loading} loadingText="着せ替え中..." colorScheme="blue" size="lg" width="full" maxW="sm" mt={4}>
+            <Button onClick={handleTryOn} isLoading={loading} loadingText="着せ替え中..." colorScheme="blue" size="lg" width="full" maxW="sm" mt={4}>
               Try On
             </Button>
 
