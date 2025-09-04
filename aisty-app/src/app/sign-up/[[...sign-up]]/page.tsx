@@ -70,7 +70,7 @@ export default function Page() {
               },
             },
           }}
-          afterSignUpUrl="/tryon"
+          fallbackRedirectUrl="/tryon"
           routing="path"
           path="/sign-up"
         />

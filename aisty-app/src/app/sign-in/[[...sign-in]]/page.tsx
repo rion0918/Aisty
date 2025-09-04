@@ -67,6 +67,9 @@ export default function Page() {
               },
             },
           }}
+          routing="path"
+          path="/sign-in"
+          fallbackRedirectUrl="/tryon"
         />
       </Flex>
     </Box>

@@ -8,7 +8,7 @@ export const AuthButtons = () => {
   return (
     <SignedOut>
       <VStack gap={4} pt={6} align="start" width="100%">
-        <SignUpButton>
+        <SignUpButton fallbackRedirectUrl="/tryon">
           <Button
             bgGradient="linear(to-r, teal.500, teal.400)"
             color="belue.50"
@@ -31,7 +31,7 @@ export const AuthButtons = () => {
           </Button>
         </SignUpButton>
 
-        <SignInButton>
+        <SignInButton fallbackRedirectUrl="/tryon">
           <Button
             variant="ghost"
             color="gray.300"

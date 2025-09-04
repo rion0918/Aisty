@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabaseAdminClient';
+import { auth } from '@clerk/nextjs/server';
 import { v4 as uuidv4 } from 'uuid';
 
 const BASE_URL = 'https://api.fashn.ai/v1';
@@ -9,7 +10,9 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 export const preferredRegion = ['hnd1'];
 
-async function uploadImageToSupabase(file: File): Promise<string> {
+type UploadedInfo = { path: string; signedUrl: string };
+
+async function uploadImageToSupabase(file: File): Promise<UploadedInfo> {
   const fileExt = file.name.split('.').pop();
   const fileName = `${uuidv4()}.${fileExt}`;
   const filePath = `tryon/${fileName}`;
@@ -28,7 +31,7 @@ async function uploadImageToSupabase(file: File): Promise<string> {
   if (signError || !signedData.signedUrl) {
     throw new Error(`Supabase signed URL error: ${signError?.message}`);
   }
-  return signedData.signedUrl;
+  return { path: filePath, signedUrl: signedData.signedUrl };
 }
 
 // 非同期化: POSTはジョブ起動のみ。predictionIdを返す
@@ -47,8 +50,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Supabase にアップロードし署名URLを取得
-    const modelImageUrl = await uploadImageToSupabase(modelImageFile);
-    const garmentImageUrl = await uploadImageToSupabase(garmentImageFile);
+    const label = (formData.get('label') as string | null) || null;
+    const modelUpload = await uploadImageToSupabase(modelImageFile);
+    const garmentUpload = await uploadImageToSupabase(garmentImageFile);
 
     const headers = {
       'Content-Type': 'application/json',
@@ -62,8 +66,8 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         model_name: 'tryon-v1.6',
         inputs: {
-          model_image: modelImageUrl,
-          garment_image: garmentImageUrl,
+          model_image: modelUpload.signedUrl,
+          garment_image: garmentUpload.signedUrl,
         },
       }),
     });
@@ -78,6 +82,33 @@ export async function POST(req: NextRequest) {
     }
 
     const { id: predictionId } = await runResponse.json();
+
+    // Save pending history entry (best-effort, with explicit error logging)
+    try {
+      const { userId } = await auth();
+      if (!userId) {
+        console.warn('No userId from Clerk auth; skip history insert');
+      } else {
+        const { error: insertError } = await supabaseAdmin
+          .from('tryon_history')
+          .insert([
+            {
+              clerk_id: userId,
+              prediction_id: predictionId,
+              model_image_path: modelUpload.path,
+              garment_image_path: garmentUpload.path,
+              label: label,
+              status: 'processing',
+            },
+          ]);
+        if (insertError) {
+          console.error('History insert error:', insertError);
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to insert try-on history (pending):', e);
+    }
+
     return NextResponse.json({ id: predictionId });
   } catch (error: unknown) {
     console.error('API Route POST error:', error);
@@ -111,6 +142,21 @@ export async function GET(req: NextRequest) {
   const statusData = await statusRes.json();
   if (statusData.status === 'completed') {
     const resultImageUrl: string | null = statusData.output?.[0] ?? null;
+    // Mark history as completed (best-effort, set both new/legacy columns)
+    try {
+      const id = searchParams.get('id');
+      if (id && resultImageUrl) {
+        const { error: updateError } = await supabaseAdmin
+          .from('tryon_history')
+          .update({ status: 'completed', result_image_url: resultImageUrl, output_image_url: resultImageUrl })
+          .eq('prediction_id', id);
+        if (updateError) {
+          console.error('History update error:', updateError);
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to update try-on history (completed):', e);
+    }
     return NextResponse.json({ status: 'completed', resultImageUrl });
   }
   if (statusData.status === 'failed' || statusData.status === 'canceled') {
