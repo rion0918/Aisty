@@ -13,17 +13,12 @@ import {
 import { Text } from "@/components/ui/atoms/Text";
 import { Heading } from "@/components/ui/atoms/Heading";
 import { Box } from "@/components/ui/atoms/Box";
-import { AuthButtons } from "@/components/ui/molecules/AuthButtons/AuthButtons";
 import { FiZap, FiCamera } from "react-icons/fi";
 import { TbShirt } from "react-icons/tb";
-import { useRouter } from "next/navigation";
-import { SignedIn } from "@clerk/nextjs";
 
 const Video = chakra("video");
 
 export const HeroSection = () => {
-  const router = useRouter();
-
   return (
     <Box position="relative" minH="100vh" bg="black" overflow="hidden">
       {/* 背景動画とグラデーション */}
@@ -122,10 +117,6 @@ export const HeroSection = () => {
                 </Text>
               </Flex>
             </VStack>
-
-            <VStack align="start" spacing={4} mt={8}>
-              <AuthButtons />
-            </VStack>
           </VStack>
 
           {/* 右側：デモ・統計情報 */}
@@ -159,7 +150,7 @@ export const HeroSection = () => {
                     </svg>
                   </Box>
                   <Heading size="lg" color="white" mb={1}>
-                    98%
+                    90%
                   </Heading>
                   <Text fontSize="sm" color="gray.400">
                     満足度
@@ -188,31 +179,6 @@ export const HeroSection = () => {
                 </CardBody>
               </Card>
             </SimpleGrid>
-
-            {/* ログイン済みユーザー向けCTA */}
-            <SignedIn>
-              <Button
-                bgGradient="linear(to-r, teal.500, teal.400)"
-                color="white"
-                size="lg"
-                px={12}
-                py={6}
-                fontSize="lg"
-                fontWeight="semibold"
-                borderRadius="full"
-                _hover={{
-                  bgGradient: "linear(to-r, teal.400, teal.300)",
-                  transform: "translateY(-2px)",
-                  boxShadow: "0 12px 35px rgba(56, 178, 172, 0.4)",
-                }}
-                transition="all 0.3s ease"
-                boxShadow="0 6px 20px rgba(56, 178, 172, 0.3)"
-                minW="280px"
-                onClick={() => router.push("/tryon")}
-              >
-                今すぐバーチャル試着を体験
-              </Button>
-            </SignedIn>
 
             <Card
               bg="rgba(56, 178, 172, 0.1)"
