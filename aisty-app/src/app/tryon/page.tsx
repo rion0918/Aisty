@@ -128,7 +128,8 @@ export default function TryOnPage() {
   const validateImageFile = useCallback(
     (file: File): boolean => {
       const validTypes = ["image/jpeg", "image/png", "image/webp"];
-      const maxSize = 10 * 1024 * 1024; // 10MB
+      // 本番環境のサーバレス制限を考慮し、1枚あたり2MBまでに制限
+      const maxSize = 2 * 1024 * 1024; // 2MB
 
       if (!validTypes.includes(file.type)) {
         toast({
@@ -144,9 +145,9 @@ export default function TryOnPage() {
       if (file.size > maxSize) {
         toast({
           title: "ファイルサイズが大きすぎます",
-          description: "10MB以下の画像をアップロードしてください。",
+          description: "本番では1枚2MB以下にしてください（合計も小さく）。",
           status: "error",
-          duration: 3000,
+          duration: 4000,
           isClosable: true,
         });
         return false;
@@ -278,10 +279,24 @@ export default function TryOnPage() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.error || "Something went wrong with the try-on request."
-        );
+        let message = "Something went wrong with the try-on request.";
+        try {
+          const ct = response.headers.get("content-type") || "";
+          if (ct.includes("application/json")) {
+            const err = await response.json();
+            message = err.error || message;
+          } else {
+            const text = await response.text();
+            // Vercel等のプラットフォームでの 413 対応
+            if (response.status === 413 || /entity too large/i.test(text)) {
+              message =
+                "アップロードサイズが大きすぎます（サーバー制限）。1枚2MB以下、全体も小さめにしてください。";
+            } else {
+              message = text || message;
+            }
+          }
+        } catch {}
+        throw new Error(message);
       }
 
       const data = await response.json();
