@@ -128,8 +128,8 @@ export default function TryOnPage() {
   const validateImageFile = useCallback(
     (file: File): boolean => {
       const validTypes = ["image/jpeg", "image/png", "image/webp"];
-      // 本番環境のサーバレス制限を考慮し、1枚あたり2MBまでに制限
-      const maxSize = 2 * 1024 * 1024; // 2MB
+      // 元の上限（10MB）に戻す
+      const maxSize = 10 * 1024 * 1024; // 10MB
 
       if (!validTypes.includes(file.type)) {
         toast({
@@ -145,7 +145,7 @@ export default function TryOnPage() {
       if (file.size > maxSize) {
         toast({
           title: "ファイルサイズが大きすぎます",
-          description: "本番では1枚2MB以下にしてください（合計も小さく）。",
+          description: "10MB以下の画像をアップロードしてください。",
           status: "error",
           duration: 4000,
           isClosable: true,
