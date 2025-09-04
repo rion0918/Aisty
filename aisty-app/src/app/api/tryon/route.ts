@@ -148,7 +148,7 @@ export async function GET(req: NextRequest) {
       if (id && resultImageUrl) {
         const { error: updateError } = await supabaseAdmin
           .from('tryon_history')
-          .update({ status: 'completed', result_image_url: resultImageUrl, output_image_url: resultImageUrl })
+          .update({ status: 'completed', result_image_url: resultImageUrl })
           .eq('prediction_id', id);
         if (updateError) {
           console.error('History update error:', updateError);

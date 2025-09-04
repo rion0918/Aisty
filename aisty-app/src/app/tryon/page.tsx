@@ -44,7 +44,6 @@ export default function TryOnPage() {
   );
   const [resultImage, setResultImage] = useState<string | null>(null);
   const [resultImageSrc, setResultImageSrc] = useState<string | null>(null);
-  const [usedProxyForResult, setUsedProxyForResult] = useState<boolean>(false);
   const [variantLabel, setVariantLabel] = useState<string>("");
   type HistoryItem = {
     id: string;
@@ -77,10 +76,8 @@ export default function TryOnPage() {
       // Always use proxy for display to avoid inline-blocking headers or auth
       const proxied = `/api/proxy-image?url=${encodeURIComponent(resultImage)}`;
       setResultImageSrc(proxied);
-      setUsedProxyForResult(true);
     } else {
       setResultImageSrc(null);
-      setUsedProxyForResult(false);
     }
   }, [resultImage]);
 
@@ -257,7 +254,7 @@ export default function TryOnPage() {
     setError(null);
     setResultImage(null);
     setResultImageSrc(null);
-    setUsedProxyForResult(false);
+
     setPredictionId(null);
     setStatus(null);
     setProgress(0);
@@ -693,33 +690,6 @@ export default function TryOnPage() {
                   >
                     🎉 試着結果
                   </Heading>
-
-                  <Card>
-                    <CardBody>
-                      <AspectRatio ratio={3 / 4}>
-                        <Image
-                          src={resultImageSrc ?? undefined}
-                          alt="Try-on Result"
-                          objectFit="contain"
-                          onError={() => {
-                            // As a last resort, try the raw URL once
-                            if (usedProxyForResult && resultImage) {
-                              setUsedProxyForResult(false);
-                              setResultImageSrc(resultImage);
-                              toast({
-                                title: "画像の読み込みに失敗しました",
-                                description: "元のURLで再読み込みします…",
-                                status: "warning",
-                                duration: 2500,
-                                isClosable: true,
-                              });
-                            }
-                          }}
-                          borderRadius="md"
-                        />
-                      </AspectRatio>
-                    </CardBody>
-                  </Card>
 
                   <Flex gap={4} wrap="wrap" justify="center">
                     <Button
