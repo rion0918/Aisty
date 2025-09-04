@@ -74,8 +74,10 @@ export default function TryOnPage() {
   // Keep a derived image src that can fall back to a proxy if direct load fails
   useEffect(() => {
     if (resultImage) {
-      setResultImageSrc(resultImage);
-      setUsedProxyForResult(false);
+      // Always use proxy for display to avoid inline-blocking headers or auth
+      const proxied = `/api/proxy-image?url=${encodeURIComponent(resultImage)}`;
+      setResultImageSrc(proxied);
+      setUsedProxyForResult(true);
     } else {
       setResultImageSrc(null);
       setUsedProxyForResult(false);
@@ -700,16 +702,13 @@ export default function TryOnPage() {
                           alt="Try-on Result"
                           objectFit="contain"
                           onError={() => {
-                            // Fallback to proxy once if direct loading fails (CORS/auth)
-                            if (!usedProxyForResult && resultImage) {
-                              setUsedProxyForResult(true);
-                              const proxied = `/api/proxy-image?url=${encodeURIComponent(
-                                resultImage
-                              )}`;
-                              setResultImageSrc(proxied);
+                            // As a last resort, try the raw URL once
+                            if (usedProxyForResult && resultImage) {
+                              setUsedProxyForResult(false);
+                              setResultImageSrc(resultImage);
                               toast({
                                 title: "画像の読み込みに失敗しました",
-                                description: "プロキシ経由で再読み込みします…",
+                                description: "元のURLで再読み込みします…",
                                 status: "warning",
                                 duration: 2500,
                                 isClosable: true,
