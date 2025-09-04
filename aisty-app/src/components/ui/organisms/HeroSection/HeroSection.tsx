@@ -97,7 +97,7 @@ export const HeroSection = () => {
               color="gray.300"
               maxW="500px"
             >
-              衣服をオンラインショッピングする前に、
+              衣服をオンラインで購入する前に、
               <br />
               一度試着してみませんか？
             </Text>
