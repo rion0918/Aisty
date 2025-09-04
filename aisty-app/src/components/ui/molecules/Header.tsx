@@ -1,15 +1,32 @@
-"use client"
+"use client";
 
-import { Flex, HStack, Spacer } from "@chakra-ui/react"
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
-import { Button } from "@/components/ui/atoms/Button"
-import { Box } from "@/components/ui/atoms/Box"
-import { Heading } from "@/components/ui/atoms/Heading"
-import { Image } from "@/components/ui/atoms/Image"
+import { Flex, HStack, Spacer } from "@chakra-ui/react";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { Button } from "@/components/ui/atoms/Button";
+import { Box } from "@/components/ui/atoms/Box";
+import { Heading } from "@/components/ui/atoms/Heading";
+import { Image } from "@/components/ui/atoms/Image";
+import { useRouter } from "next/navigation";
 
 export const Header = () => {
+  const router = useRouter();
+
   return (
-    <Flex as="header" p={4} bg="gray.900" borderBottom="1px" borderColor="gray.700" alignItems="center" boxShadow="lg">
+    <Flex
+      as="header"
+      p={6}
+      bg="rgba(0, 0, 0, 0.3)"
+      backdropFilter="blur(20px)"
+      borderBottom="1px solid"
+      borderColor="rgba(255, 255, 255, 0.1)"
+      alignItems="center"
+      position="fixed"
+      top="0"
+      left="0"
+      right="0"
+      zIndex="1000"
+      transition="all 0.3s ease"
+    >
       <HStack>
         <Image
           src="/images/image.png"
@@ -19,7 +36,7 @@ export const Header = () => {
           alt="Naruto Uzumaki"
         />
         <Heading as="h2" size="lg" color="white" fontWeight="bold">
-          仮装試着サービス
+          AiSty(開発期間中によりテスト版です)
         </Heading>
       </HStack>
       <Spacer />
@@ -33,20 +50,35 @@ export const Header = () => {
               variant="ghost"
               color="gray.300"
               size="md"
-              _hover={{ bg: "gray.800", color: "white" }}
-              border="1px"
-              borderColor="gray.600"
-              onClick={() => window.location.href = '/sign-in'}
+              borderRadius="full"
+              px={6}
+              _hover={{
+                bg: "rgba(255, 255, 255, 0.1)",
+                color: "white",
+                transform: "translateY(-1px)",
+              }}
+              border="1px solid"
+              borderColor="rgba(255, 255, 255, 0.2)"
+              backdropFilter="blur(10px)"
+              transition="all 0.2s ease"
+              onClick={() => router.push("/sign-in")}
             >
               ログイン
             </Button>
-            <Button 
-              bg="teal.500" 
-              color="white" 
-              size="md" 
-              _hover={{ bg: "teal.400" }} 
-              boxShadow="md"
-              onClick={() => window.location.href = '/sign-up'}
+            <Button
+              bgGradient="linear(to-r, teal.500, teal.400)"
+              color="white"
+              size="md"
+              borderRadius="full"
+              px={6}
+              _hover={{
+                bgGradient: "linear(to-r, teal.400, teal.300)",
+                transform: "translateY(-1px)",
+                boxShadow: "0 8px 25px rgba(56, 178, 172, 0.3)",
+              }}
+              boxShadow="0 4px 15px rgba(56, 178, 172, 0.2)"
+              transition="all 0.2s ease"
+              onClick={() => router.push("/sign-up")}
             >
               新規登録
             </Button>
@@ -54,5 +86,5 @@ export const Header = () => {
         </SignedOut>
       </Box>
     </Flex>
-  )
-}
+  );
+};

@@ -1,20 +1,48 @@
-'use client'
+"use client";
 
-import { Container, VStack, chakra } from "@chakra-ui/react"
-import { Text } from "@/components/ui/atoms/Text"
-import { Heading } from "@/components/ui/atoms/Heading"
-import { Box } from "@/components/ui/atoms/Box"
-import { AuthButtons } from "@/components/ui/molecules/AuthButtons/AuthButtons"
+import {
+  Container,
+  VStack,
+  chakra,
+  Button,
+  Flex,
+  SimpleGrid,
+  Card,
+  CardBody,
+} from "@chakra-ui/react";
+import { Text } from "@/components/ui/atoms/Text";
+import { Heading } from "@/components/ui/atoms/Heading";
+import { Box } from "@/components/ui/atoms/Box";
+import { AuthButtons } from "@/components/ui/molecules/AuthButtons/AuthButtons";
+import { FiZap, FiCamera } from "react-icons/fi";
+import { TbShirt } from "react-icons/tb";
+import { useRouter } from "next/navigation";
+import { SignedIn } from "@clerk/nextjs";
 
-const Video = chakra("video")
+const Video = chakra("video");
 
 export const HeroSection = () => {
+  const router = useRouter();
+
   return (
-    <Box position="relative" minH="100vh" display="flex" alignItems="center">
-      {/* 背景動画 - 控えめで効果的 */}
-      <Box position="absolute" top="0" left="0" width="100%" height="100%" zIndex="0" overflow="hidden">
-        {/* メイン背景動画 - 右側に配置、控えめに */}
-        <Box position="absolute" top="0" right="0" width="50%" height="100%" opacity="0.15" overflow="hidden">
+    <Box position="relative" minH="100vh" bg="black" overflow="hidden">
+      {/* 背景動画とグラデーション */}
+      <Box
+        position="absolute"
+        top="0"
+        left="0"
+        width="100%"
+        height="100%"
+        zIndex="0"
+      >
+        <Box
+          position="absolute"
+          top="0"
+          right="0"
+          width="60%"
+          height="100%"
+          opacity="0.2"
+        >
           <Video
             autoPlay
             muted
@@ -23,110 +51,234 @@ export const HeroSection = () => {
             width="100%"
             height="100%"
             objectFit="cover"
-            filter="brightness(1.6) blur(1px)"
-            style={{ transform: "scale(1.1)" }}
+            filter="brightness(1.4) blur(1px)"
           >
             <source src="/images/douga.mp4" type="video/mp4" />
           </Video>
         </Box>
 
-        {/* 上下のグラデーション */}
+        {/* 美しいグラデーションオーバーレイ */}
         <Box
           position="absolute"
           top="0"
           left="0"
           width="100%"
-          height="20%"
-          bgGradient="linear(to-b, black 0%, transparent 100%)"
-          zIndex="1"
-        />
-        <Box
-          position="absolute"
-          bottom="0"
-          left="0"
-          width="100%"
-          height="20%"
-          bgGradient="linear(to-t, black 0%, transparent 100%)"
-          zIndex="1"
+          height="100%"
+          bgGradient="radial(ellipse at center left, rgba(56, 178, 172, 0.15) 0%, rgba(128, 90, 213, 0.1) 50%, transparent 70%)"
         />
       </Box>
 
-      {/* メインコンテンツ - 可読性重視 */}
-      <Container maxW="container.lg" position="relative" zIndex="2">
-        <VStack gap={8} align="start" maxW="600px">
-          <Heading
-            as="h1"
-            size="3xl"
-            lineHeight="1.1"
-            color="white"
-            textShadow="2px 2px 8px rgba(0,0,0,0.9)"
-            fontWeight="bold"
-          >
-            衣服はバーチャルで着る時代。
-            <br />
-            <Box as="span" bgGradient="linear(to-r, teal.400, purple.400)" bgClip="text" display="inline">
-              自宅で見つけよう
-            </Box>
-          </Heading>
+      <Container maxW="container.xl" position="relative" zIndex="2" py={20}>
+        <SimpleGrid
+          columns={{ base: 1, lg: 2 }}
+          gap={16}
+          alignItems="center"
+          minH="80vh"
+        >
+          {/* 左側：メインコンテンツ */}
+          <VStack align="start" spacing={8}>
+            <Heading
+              as="h1"
+              size={{ base: "2xl", md: "3xl", lg: "4xl" }}
+              lineHeight="1.1"
+              color="white"
+              fontWeight="bold"
+            >
+              服選びの
+              <Box
+                as="span"
+                bgGradient="linear(to-r, teal.300, purple.300)"
+                bgClip="text"
+                display="inline"
+              >
+                「失敗」
+              </Box>
+              AiStyで解決!
+            </Heading>
 
-          <Text
-            fontSize="xl"
-            lineHeight="1.7"
-            color="gray.200"
-            textShadow="1px 1px 4px rgba(0,0,0,0.8)"
-            maxW="500px"
-          >
-            AiStyは、AI技術であなたのStyleをサポート。
-            <br />
-            実際に着てみたような試着体験で、服選びの失敗をなくし、お気に入りの衣服を見つけましょう。
-          </Text>
+            <Text
+              fontSize={{ base: "lg", md: "xl" }}
+              lineHeight="1.8"
+              color="gray.300"
+              maxW="500px"
+            >
+              衣服をオンラインショッピングする前に、
+              <br />
+              一度試着してみませんか？
+            </Text>
 
-          <AuthButtons />
+            {/* 特徴ポイント */}
+            <VStack align="start" spacing={3} mt={6}>
+              <Flex align="center" gap={3}>
+                <FiZap size={20} color="#38B2AC" />
+                <Text color="gray.300" fontSize="md">
+                  高精度AI技術による自然な合成
+                </Text>
+              </Flex>
+              <Flex align="center" gap={3}>
+                <FiCamera size={20} color="#9F7AEA" />
+                <Text color="gray.300" fontSize="md">
+                  簡単アップロードで即座に試着
+                </Text>
+              </Flex>
+            </VStack>
 
-          <Text
-            fontSize="sm"
-            color="gray.400"
-            mt={4}
-            bg="rgba(0,0,0,0.4)"
-            px={4}
-            py={2}
-            borderRadius="md"
-            backdropFilter="blur(5px)"
-            border="1px solid"
-            borderColor="gray.700"
-          >
-            ※ 会員登録は無料です。クレジットカード情報の入力は不要です。
-          </Text>
-        </VStack>
+            <VStack align="start" spacing={4} mt={8}>
+              <AuthButtons />
+            </VStack>
+          </VStack>
 
-        {/* 右側の装飾的要素 - 控えめに */}
-        <Box
-          position="absolute"
-          top="20%"
-          right="10%"
-          width="200px"
-          height="200px"
-          borderRadius="full"
-          border="1px solid"
-          borderColor="teal.500"
-          opacity="0.1"
-          animation="pulse 4s ease-in-out infinite"
-          display={{ base: "none", lg: "block" }}
-        />
+          {/* 右側：デモ・統計情報 */}
+          <VStack spacing={8} display={{ base: "none", lg: "flex" }}>
+            {/* 統計カード */}
+            <SimpleGrid columns={2} gap={4} width="full">
+              <Card
+                bg="rgba(255,255,255,0.05)"
+                backdropFilter="blur(10px)"
+                border="1px solid"
+                borderColor="gray.800"
+              >
+                <CardBody textAlign="center" py={6}>
+                  <Box
+                    boxSize={8}
+                    mb={2}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <svg
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#38B2AC"
+                      strokeWidth="2"
+                    >
+                      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                      <polyline points="17 6 23 6 23 12"></polyline>
+                    </svg>
+                  </Box>
+                  <Heading size="lg" color="white" mb={1}>
+                    98%
+                  </Heading>
+                  <Text fontSize="sm" color="gray.400">
+                    満足度
+                  </Text>
+                </CardBody>
+              </Card>
 
-        <Box
-          position="absolute"
-          bottom="30%"
-          right="20%"
-          width="100px"
-          height="100px"
-          borderRadius="full"
-          bg="purple.500"
-          opacity="0.05"
-          animation="float 6s ease-in-out infinite"
-          display={{ base: "none", lg: "block" }}
-        />
+              <Card
+                bg="rgba(255,255,255,0.05)"
+                backdropFilter="blur(10px)"
+                border="1px solid"
+                borderColor="gray.800"
+              >
+                <CardBody textAlign="center" py={6}>
+                  <TbShirt
+                    size={32}
+                    color="#9F7AEA"
+                    style={{ marginBottom: "8px" }}
+                  />
+                  <Heading size="lg" color="white" mb={1}>
+                    50K+
+                  </Heading>
+                  <Text fontSize="sm" color="gray.400">
+                    試着回数
+                  </Text>
+                </CardBody>
+              </Card>
+            </SimpleGrid>
+
+            {/* ログイン済みユーザー向けCTA */}
+            <SignedIn>
+              <Button
+                bgGradient="linear(to-r, teal.500, teal.400)"
+                color="white"
+                size="lg"
+                px={12}
+                py={6}
+                fontSize="lg"
+                fontWeight="semibold"
+                borderRadius="full"
+                _hover={{
+                  bgGradient: "linear(to-r, teal.400, teal.300)",
+                  transform: "translateY(-2px)",
+                  boxShadow: "0 12px 35px rgba(56, 178, 172, 0.4)",
+                }}
+                transition="all 0.3s ease"
+                boxShadow="0 6px 20px rgba(56, 178, 172, 0.3)"
+                minW="280px"
+                onClick={() => router.push("/tryon")}
+              >
+                今すぐバーチャル試着を体験
+              </Button>
+            </SignedIn>
+
+            <Card
+              bg="rgba(56, 178, 172, 0.1)"
+              backdropFilter="blur(10px)"
+              border="1px solid"
+              borderColor="teal.700"
+              width="full"
+            >
+              <CardBody textAlign="center" py={8}>
+                <FiZap
+                  size={48}
+                  color="#4FD1C7"
+                  style={{ marginBottom: "16px" }}
+                />
+                <Heading size="md" color="white" mb={3}>
+                  今すぐ無料で体験
+                </Heading>
+                <Text fontSize="sm" color="gray.300" mb={6}>
+                  3分で完了。登録不要で即座に試着体験
+                </Text>
+                <Button
+                  colorScheme="teal"
+                  size="lg"
+                  width="full"
+                  leftIcon={<FiZap size={16} />}
+                  _hover={{
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 8px 25px rgba(56, 178, 172, 0.3)",
+                  }}
+                  transition="all 0.3s ease"
+                >
+                  バーチャル試着を始める
+                </Button>
+              </CardBody>
+            </Card>
+          </VStack>
+        </SimpleGrid>
       </Container>
+
+      {/* 装飾的要素 */}
+      <Box
+        position="absolute"
+        top="10%"
+        right="5%"
+        width="300px"
+        height="300px"
+        borderRadius="full"
+        border="1px solid"
+        borderColor="teal.500"
+        opacity="0.1"
+        animation="pulse 6s ease-in-out infinite"
+        display={{ base: "none", xl: "block" }}
+      />
+
+      <Box
+        position="absolute"
+        bottom="10%"
+        left="5%"
+        width="200px"
+        height="200px"
+        borderRadius="full"
+        bg="purple.500"
+        opacity="0.05"
+        animation="float 8s ease-in-out infinite"
+        display={{ base: "none", xl: "block" }}
+      />
     </Box>
-  )
-}
+  );
+};

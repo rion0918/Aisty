@@ -1,22 +1,28 @@
-import { Container, VStack, SimpleGrid } from "@chakra-ui/react"
-import { Box } from "@/components/ui/atoms/Box"
-import { Text } from "@/components/ui/atoms/Text"
-import { Heading } from "@/components/ui/atoms/Heading"
+import { Container, VStack, SimpleGrid } from "@chakra-ui/react";
+import { Box } from "@/components/ui/atoms/Box";
+import { Text } from "@/components/ui/atoms/Text";
+import { Heading } from "@/components/ui/atoms/Heading";
 
 export const Footer = () => {
   return (
-    <Box as="footer" bg="black" color="white" borderTop="1px" borderColor="gray.800">
+    <Box
+      as="footer"
+      bg="black"
+      color="white"
+      borderTop="1px"
+      borderColor="gray.800"
+    >
       <Container maxW="container.lg" py={12}>
         <SimpleGrid columns={{ base: 1, md: 4 }} gap={8}>
           {/* サービス情報 */}
           <VStack align="start" gap={4}>
             <Heading as="h3" size="md" color="white">
-              AiSty
+              AiSty(テスト版)
             </Heading>
             <Text fontSize="sm" color="gray.400" lineHeight="1.6">
               AIを活用した仮想試着サービス
               <br />
-              あなたにぴったりのスタイルを見つけましょう
+              あなたにぴったりのスタイルを
             </Text>
           </VStack>
 
@@ -137,5 +143,5 @@ export const Footer = () => {
         </Box>
       </Container>
     </Box>
-  )
-}
+  );
+};
