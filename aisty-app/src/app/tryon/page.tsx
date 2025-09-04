@@ -273,8 +273,8 @@ export default function TryOnPage() {
 
   return (
     <Box>
-      <Box as="main" minH="calc(100vh - 138px)">
-        <Container maxW="container.lg" py={20}>
+      <Box as="main" minH="calc(100vh - 138px)" pt={{ base: "100px", md: "120px" }}>
+        <Container maxW="container.lg" py={8}>
           <VStack spacing={4} mb={12}>
             <Heading as="h1" size="2xl" textAlign="center" bgGradient="linear(to-r, teal.400, purple.500)" bgClip="text">
               バーチャル試着

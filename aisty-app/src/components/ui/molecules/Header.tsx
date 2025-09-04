@@ -1,6 +1,19 @@
 "use client";
 
-import { Flex, HStack, Spacer, IconButton, useDisclosure, VStack, Drawer, DrawerOverlay, DrawerContent, DrawerCloseButton, DrawerHeader, DrawerBody } from "@chakra-ui/react";
+import {
+  Flex,
+  HStack,
+  Spacer,
+  IconButton,
+  useDisclosure,
+  VStack,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+  DrawerBody,
+} from "@chakra-ui/react";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/atoms/Button";
 import { Box } from "@/components/ui/atoms/Box";
@@ -38,19 +51,19 @@ export const Header = () => {
             fit="cover"
             alt="AiSty Logo"
           />
-          <Heading 
-            as="h2" 
-            size={{ base: "sm", md: "lg" }} 
-            color="white" 
+          <Heading
+            as="h2"
+            size={{ base: "sm", md: "lg" }}
+            color="white"
             fontWeight="bold"
             display={{ base: "none", sm: "block" }}
           >
             AiSty(開発期間中によりテスト版です)
           </Heading>
-          <Heading 
-            as="h2" 
-            size="sm" 
-            color="white" 
+          <Heading
+            as="h2"
+            size="sm"
+            color="white"
             fontWeight="bold"
             display={{ base: "block", sm: "none" }}
           >
@@ -58,7 +71,7 @@ export const Header = () => {
           </Heading>
         </HStack>
         <Spacer />
-        
+
         {/* デスクトップ表示 */}
         <Box display={{ base: "none", md: "block" }}>
           <SignedIn>
@@ -105,7 +118,7 @@ export const Header = () => {
             </Flex>
           </SignedOut>
         </Box>
-        
+
         {/* モバイル表示 */}
         <Box display={{ base: "block", md: "none" }}>
           <SignedIn>
@@ -125,13 +138,17 @@ export const Header = () => {
           </SignedOut>
         </Box>
       </Flex>
-      
+
       {/* モバイルメニュー */}
       <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent bg="rgba(0, 0, 0, 0.9)" backdropFilter="blur(20px)">
           <DrawerCloseButton color="white" />
-          <DrawerHeader color="white" borderBottomWidth="1px" borderColor="gray.700">
+          <DrawerHeader
+            color="white"
+            borderBottomWidth="1px"
+            borderColor="gray.700"
+          >
             AiSty
           </DrawerHeader>
           <DrawerBody>
