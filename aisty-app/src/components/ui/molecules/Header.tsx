@@ -1,7 +1,7 @@
 "use client"
 
 import { Flex, HStack, Spacer } from "@chakra-ui/react"
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
 import { Button } from "@/components/ui/atoms/Button"
 import { Box } from "@/components/ui/atoms/Box"
 import { Heading } from "@/components/ui/atoms/Heading"
@@ -29,23 +29,27 @@ export const Header = () => {
         </SignedIn>
         <SignedOut>
           <Flex gap={3} alignItems="center">
-            <SignInButton mode="redirect">
-              <Button
-                variant="ghost"
-                color="gray.300"
-                size="md"
-                _hover={{ bg: "gray.800", color: "white" }}
-                border="1px"
-                borderColor="gray.600"
-              >
-                ログイン
-              </Button>
-            </SignInButton>
-            <SignUpButton mode="redirect">
-              <Button bg="teal.500" color="white" size="md" _hover={{ bg: "teal.400" }} boxShadow="md">
-                新規登録
-              </Button>
-            </SignUpButton>
+            <Button
+              variant="ghost"
+              color="gray.300"
+              size="md"
+              _hover={{ bg: "gray.800", color: "white" }}
+              border="1px"
+              borderColor="gray.600"
+              onClick={() => window.location.href = '/sign-in'}
+            >
+              ログイン
+            </Button>
+            <Button 
+              bg="teal.500" 
+              color="white" 
+              size="md" 
+              _hover={{ bg: "teal.400" }} 
+              boxShadow="md"
+              onClick={() => window.location.href = '/sign-up'}
+            >
+              新規登録
+            </Button>
           </Flex>
         </SignedOut>
       </Box>

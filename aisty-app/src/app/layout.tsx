@@ -40,6 +40,8 @@ export default function RootLayout({
   
   if (!publishableKey) {
     console.error('Missing NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY environment variable');
+  } else {
+    console.log('Clerk Publishable Key prefix:', publishableKey.substring(0, 20) + '...');
   }
 
   return (
