@@ -69,6 +69,7 @@ export default function TryOnPage() {
   const [, setError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState<"model" | "garment" | null>(null);
   const toast = useToast();
+  const resultRef = useRef<HTMLDivElement | null>(null);
 
   // Keep a derived image src that can fall back to a proxy if direct load fails
   useEffect(() => {
@@ -334,6 +335,13 @@ export default function TryOnPage() {
             duration: 3000,
             isClosable: true,
           });
+          // Scroll to result area on mobile for better visibility
+          setTimeout(() => {
+            resultRef.current?.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }, 150);
           done = true;
           break;
         }
@@ -397,25 +405,78 @@ export default function TryOnPage() {
         as="main"
         minH="calc(100vh - 138px)"
         pt={{ base: "100px", md: "120px" }}
+        pb={{ base: "80px", md: 0 }}
       >
-        <Container maxW="container.lg" py={8}>
-          <VStack spacing={4} mb={12}>
+        <Container
+          maxW="container.lg"
+          py={{ base: 4, md: 8 }}
+          px={{ base: 4, md: 8 }}
+        >
+          <VStack spacing={{ base: 6, md: 8 }} mb={{ base: 8, md: 12 }}>
             <Heading
               as="h1"
-              size="2xl"
+              size={{ base: "xl", md: "2xl" }}
               textAlign="center"
               bgGradient="linear(to-r, teal.400, purple.500)"
               bgClip="text"
+              px={{ base: 2, md: 0 }}
             >
               バーチャル試着
             </Heading>
-            <Text fontSize="lg" color="gray.600" textAlign="center" maxW="2xl">
-              AIの力で、実際に着用したような自然な試着体験を。
-              あなたの写真と気になる衣服を組み合わせて、購入前に着用イメージを確認できます。
-            </Text>
+            <Box maxW={{ base: "full", md: "3xl" }} px={{ base: 4, md: 0 }}>
+              <Text
+                fontSize={{ base: "md", md: "lg" }}
+                fontWeight="semibold"
+                color="gray.700"
+                mb={{ base: 3, md: 4 }}
+                textAlign="center"
+              >
+                綺麗に試着するために
+              </Text>
+
+              <VStack spacing={{ base: 3, md: 4 }} align="stretch">
+                <Box>
+                  <Text
+                    fontSize={{ base: "sm", md: "md" }}
+                    fontWeight="bold"
+                    color="gray.800"
+                    mb={{ base: 1, md: 2 }}
+                  >
+                    自分の写真をアップロード
+                  </Text>
+                  <VStack spacing={1} align="start" pl={{ base: 2, md: 4 }}>
+                    <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
+                      ・正面から、全身または上半身がしっかり写っている写真をご用意ください。
+                    </Text>
+                    <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
+                      ・明るくて、服の形がはっきり見える写真がおすすめです。
+                    </Text>
+                  </VStack>
+                </Box>
+
+                <Box>
+                  <Text
+                    fontSize={{ base: "sm", md: "md" }}
+                    fontWeight="bold"
+                    color="gray.800"
+                    mb={{ base: 1, md: 2 }}
+                  >
+                    試着したい服の写真をアップロード
+                  </Text>
+                  <VStack spacing={1} align="start" pl={{ base: 2, md: 4 }}>
+                    <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
+                      ・オンラインショップなどにある「平置きの服の画像」や「商品ページの画像」を使うと、より自然に合成できます。
+                    </Text>
+                    <Text fontSize={{ base: "xs", md: "sm" }} color="gray.600">
+                      ・Tシャツ・ワンピース・スカートなど、どんな服でもOKです。
+                    </Text>
+                  </VStack>
+                </Box>
+              </VStack>
+            </Box>
           </VStack>
 
-          <VStack gap={8} align="center">
+          <VStack gap={{ base: 6, md: 8 }} align="center">
             {/* プログレスインジケーター */}
             {loading && (
               <Box width="full" maxW="md" mb={8}>
@@ -460,7 +521,7 @@ export default function TryOnPage() {
 
             <SimpleGrid
               columns={{ base: 1, md: 2 }}
-              gap={8}
+              gap={{ base: 4, md: 8 }}
               width="full"
               maxW="4xl"
             >
@@ -475,7 +536,7 @@ export default function TryOnPage() {
 
                     <Box
                       width="full"
-                      height="300px"
+                      height={{ base: "250px", md: "300px" }}
                       border="2px dashed"
                       borderColor={
                         dragOver === "model"
@@ -501,6 +562,7 @@ export default function TryOnPage() {
                       <Input
                         type="file"
                         accept="image/*"
+                        capture="user"
                         onChange={handleModelImageChange}
                         ref={modelInputRef}
                         display="none"
@@ -517,17 +579,41 @@ export default function TryOnPage() {
                         </AspectRatio>
                       ) : (
                         <VStack spacing={3} color="gray.500">
-                          {dragOver === "model" ? (
-                            <MdDragIndicator size={32} />
-                          ) : (
+                          {/* Icon: show drag indicator only on md+, upload icon on mobile */}
+                          <Box display={{ base: "none", md: "block" }}>
+                            {dragOver === "model" ? (
+                              <MdDragIndicator size={32} />
+                            ) : (
+                              <FiUpload size={32} />
+                            )}
+                          </Box>
+                          <Box display={{ base: "block", md: "none" }}>
                             <FiUpload size={32} />
-                          )}
-                          <Text textAlign="center" fontSize="sm">
-                            {dragOver === "model"
-                              ? "ここにドロップ"
-                              : "クリックまたはドラッグ&ドロップ"}
+                          </Box>
+                          <Text
+                            textAlign="center"
+                            fontSize={{ base: "xs", md: "sm" }}
+                          >
+                            <Box
+                              as="span"
+                              display={{ base: "inline", md: "none" }}
+                            >
+                              タップしてアップロード
+                            </Box>
+                            <Box
+                              as="span"
+                              display={{ base: "none", md: "inline" }}
+                            >
+                              {dragOver === "model"
+                                ? "ここにドロップ"
+                                : "クリックまたはドラッグ&ドロップ"}
+                            </Box>
                             <br />
-                            <Text as="span" fontSize="xs" color="gray.400">
+                            <Text
+                              as="span"
+                              fontSize={{ base: "2xs", md: "xs" }}
+                              color="gray.400"
+                            >
                               全身が写った写真をアップロード
                             </Text>
                           </Text>
@@ -562,7 +648,7 @@ export default function TryOnPage() {
 
                     <Box
                       width="full"
-                      height="300px"
+                      height={{ base: "250px", md: "300px" }}
                       border="2px dashed"
                       borderColor={
                         dragOver === "garment"
@@ -588,6 +674,7 @@ export default function TryOnPage() {
                       <Input
                         type="file"
                         accept="image/*"
+                        capture="environment"
                         onChange={handleGarmentImageChange}
                         ref={garmentInputRef}
                         display="none"
@@ -604,17 +691,41 @@ export default function TryOnPage() {
                         </AspectRatio>
                       ) : (
                         <VStack spacing={3} color="gray.500">
-                          {dragOver === "garment" ? (
-                            <MdDragIndicator size={32} />
-                          ) : (
+                          {/* Icon: show drag indicator only on md+, upload icon on mobile */}
+                          <Box display={{ base: "none", md: "block" }}>
+                            {dragOver === "garment" ? (
+                              <MdDragIndicator size={32} />
+                            ) : (
+                              <FiUpload size={32} />
+                            )}
+                          </Box>
+                          <Box display={{ base: "block", md: "none" }}>
                             <FiUpload size={32} />
-                          )}
-                          <Text textAlign="center" fontSize="sm">
-                            {dragOver === "garment"
-                              ? "ここにドロップ"
-                              : "クリックまたはドラッグ&ドロップ"}
+                          </Box>
+                          <Text
+                            textAlign="center"
+                            fontSize={{ base: "xs", md: "sm" }}
+                          >
+                            <Box
+                              as="span"
+                              display={{ base: "inline", md: "none" }}
+                            >
+                              タップしてアップロード
+                            </Box>
+                            <Box
+                              as="span"
+                              display={{ base: "none", md: "inline" }}
+                            >
+                              {dragOver === "garment"
+                                ? "ここにドロップ"
+                                : "クリックまたはドラッグ&ドロップ"}
+                            </Box>
                             <br />
-                            <Text as="span" fontSize="xs" color="gray.400">
+                            <Text
+                              as="span"
+                              fontSize={{ base: "2xs", md: "xs" }}
+                              color="gray.400"
+                            >
                               試着したい衣服の写真をアップロード
                             </Text>
                           </Text>
@@ -627,6 +738,7 @@ export default function TryOnPage() {
                       placeholder="比較ジャンル名を入力(パーカー、シャツ)"
                       value={variantLabel}
                       onChange={(e) => setVariantLabel(e.target.value)}
+                      size={{ base: "sm", md: "md" }}
                     />
 
                     {garmentImagePreview && (
@@ -645,22 +757,28 @@ export default function TryOnPage() {
                 </CardBody>
               </Card>
             </SimpleGrid>
-            {/* アクションボタン */}
-            <VStack spacing={4} mt={8}>
+            {/* アクションボタン（PC/タブレット） */}
+            <VStack
+              spacing={{ base: 3, md: 4 }}
+              mt={{ base: 6, md: 8 }}
+              display={{ base: "none", md: "flex" }}
+            >
               <Button
                 onClick={handleTryOn}
                 isLoading={loading}
                 loadingText="AI処理中..."
                 colorScheme="teal"
-                size="lg"
+                size={{ base: "md", md: "lg" }}
                 width="full"
-                maxW="md"
+                maxW={{ base: "full", md: "md" }}
                 leftIcon={<FiZap size={16} />}
                 isDisabled={!modelImage || !garmentImage}
                 _disabled={{
                   opacity: 0.6,
                   cursor: "not-allowed",
                 }}
+                fontSize={{ base: "sm", md: "md" }}
+                py={{ base: 6, md: 8 }}
               >
                 バーチャル試着を開始
               </Button>
@@ -678,9 +796,38 @@ export default function TryOnPage() {
               )}
             </VStack>
 
+            {/* モバイル用 固定アクションバー */}
+            <Box
+              display={{ base: "block", md: "none" }}
+              position="sticky"
+              bottom={0}
+              left={0}
+              right={0}
+              bg="white"
+              borderTopWidth="1px"
+              borderColor="gray.200"
+              px={4}
+              py={3}
+              zIndex={10}
+            >
+              <Button
+                onClick={handleTryOn}
+                isLoading={loading}
+                loadingText="AI処理中..."
+                colorScheme="teal"
+                size="lg"
+                width="full"
+                leftIcon={<FiZap size={16} />}
+                isDisabled={!modelImage || !garmentImage}
+                _disabled={{ opacity: 0.6, cursor: "not-allowed" }}
+              >
+                バーチャル試着を開始
+              </Button>
+            </Box>
+
             {/* 結果表示 */}
             {resultImageSrc && (
-              <Box mt={12} width="full" maxW="2xl">
+              <Box ref={resultRef} mt={12} width="full" maxW="2xl">
                 <VStack spacing={6}>
                   <Heading
                     as="h2"
@@ -690,6 +837,14 @@ export default function TryOnPage() {
                   >
                     🎉 試着結果
                   </Heading>
+                  <AspectRatio ratio={3 / 4} width="full">
+                    <Image
+                      src={resultImageSrc}
+                      alt="試着結果"
+                      objectFit="contain"
+                      borderRadius="md"
+                    />
+                  </AspectRatio>
 
                   <Flex gap={4} wrap="wrap" justify="center">
                     <Button
@@ -736,7 +891,10 @@ export default function TryOnPage() {
               ) : history.length === 0 ? (
                 <Text color="gray.500">まだ履歴がありません。</Text>
               ) : (
-                <SimpleGrid columns={{ base: 2, md: 4 }} gap={4}>
+                <SimpleGrid
+                  columns={{ base: 1, sm: 2, md: 4 }}
+                  gap={{ base: 3, md: 4 }}
+                >
                   {history.map((item) => {
                     const isSelected = selectedForCompare.includes(item.id);
                     const resultUrl =
