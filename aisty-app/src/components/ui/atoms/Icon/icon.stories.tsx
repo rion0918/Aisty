@@ -1,18 +1,18 @@
-import React from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
-import { Icon } from './icon';
-import { HStack } from '@chakra-ui/react';
-import { FiZap, FiCamera, FiHeart } from 'react-icons/fi';
+import React from "react";
+import type { Meta, StoryObj } from "@storybook/react";
+import { Icon } from "./icon";
+import { HStack } from "@chakra-ui/react";
+import { FiZap, FiCamera, FiHeart } from "react-icons/fi";
 
 const meta: Meta<typeof Icon> = {
-  title: 'Atoms/Icon',
+  title: "Atoms/Icon",
   component: Icon,
   args: {
     as: FiZap,
     boxSize: 6,
-    color: 'teal.400',
+    color: "teal.400",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
 };
 
 export default meta;
@@ -34,11 +34,10 @@ export const Sizes: Story = {
 export const Variants: Story = {
   render: () => (
     <HStack spacing={6}>
-      <Icon as={FiZap} boxSize={8} color='teal.400' />
-      <Icon as={FiCamera} boxSize={8} color='purple.400' />
-      <Icon as={FiHeart} boxSize={8} color='red.400' />
+      <Icon as={FiZap} boxSize={8} color="teal.400" />
+      <Icon as={FiCamera} boxSize={8} color="purple.400" />
+      <Icon as={FiHeart} boxSize={8} color="red.400" />
     </HStack>
   ),
   parameters: { controls: { disable: true } },
 };
-

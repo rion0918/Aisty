@@ -1,5 +1,6 @@
 import type { StorybookConfig } from '@storybook/nextjs';
 import { mergeConfig } from 'vite';
+import path from 'node:path';
 import react from '@vitejs/plugin-react-swc';
 
 const config: StorybookConfig = {
@@ -23,6 +24,11 @@ const config: StorybookConfig = {
       },
       optimizeDeps: {
         include: ['@chakra-ui/react', '@emotion/react', '@emotion/styled'],
+      },
+      resolve: {
+        alias: {
+          '@clerk/nextjs': path.resolve(process.cwd(), '.storybook/mocks/clerk.tsx'),
+        },
       },
     });
   },
