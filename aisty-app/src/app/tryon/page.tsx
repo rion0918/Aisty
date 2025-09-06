@@ -400,7 +400,18 @@ export default function TryOnPage() {
   };
 
   return (
-    <Box>
+    <Box bg="pink.50" minH="100vh">
+      {/* 共通ヘッダーが見えにくい為、オーバーレイを以下に配置 */}
+      <Box
+        position="fixed"
+        top="0"
+        left="0"
+        right="0"
+        height="138px"
+        bg="linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%)"
+        zIndex="999"
+        pointerEvents="none"
+      />
       <Box
         as="main"
         minH="calc(100vh - 138px)"
