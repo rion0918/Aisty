@@ -1,9 +1,11 @@
 import React from 'react';
-import { Icon as ChakraIcon, IconProps } from '@chakra-ui/react';
+import { Icon as ChakraIcon, IconProps, forwardRef } from '@chakra-ui/react';
 
-export const Icon = (props: IconProps) => {
-  return <ChakraIcon {...props} />;
-};
+// Keep Chakra's polymorphic typing so `as={...}` works (e.g., react-icons)
+export const Icon = forwardRef<IconProps, 'svg'>((props, ref) => (
+  <ChakraIcon ref={ref} {...props} />
+));
+
+Icon.displayName = 'Icon';
 
 export type { IconProps };
-
