@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Heading, SimpleGrid, VStack, Container } from "@chakra-ui/react";
-import { Text } from "@/components/ui/atoms/Text";
+import { Text } from "@/components/ui/atoms/Text/text";
 
 export const FeatureSection = () => {
   return (

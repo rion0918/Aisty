@@ -11,9 +11,9 @@ import {
   Badge,
   Flex,
 } from "@chakra-ui/react";
-import { Text } from "@/components/ui/atoms/Text";
-import { Heading } from "@/components/ui/atoms/Heading";
-import { Box } from "@/components/ui/atoms/Box";
+import { Text } from "@/components/ui/atoms/Text/text";
+import { Heading } from "@/components/ui/atoms/Heading/heading";
+import { Box } from "@/components/ui/atoms/Box/box";
 import {
   FiPlay,
   FiUpload,
@@ -21,13 +21,11 @@ import {
   FiDownload,
   FiArrowRight,
 } from "react-icons/fi";
-import { useRouter } from "next/navigation";
+import NextLink from "next/link";
 
 const Video = chakra("video");
 
 export const UsageExampleSection = () => {
-  const router = useRouter();
-
   return (
     <Box bg="gray.900" py={24} position="relative">
       {/* 背景グラデーション */}
@@ -275,6 +273,8 @@ export const UsageExampleSection = () => {
             </Text>
 
             <Button
+              as={NextLink}
+              href="/sign-in"
               size="lg"
               colorScheme="teal"
               rightIcon={<FiArrowRight size={16} />}
@@ -283,7 +283,6 @@ export const UsageExampleSection = () => {
                 boxShadow: "0 8px 25px rgba(56, 178, 172, 0.3)",
               }}
               transition="all 0.3s ease"
-              onClick={() => router.push("/tryon")}
             >
               今すぐ無料で試着体験
             </Button>

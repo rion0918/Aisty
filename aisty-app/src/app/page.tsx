@@ -1,6 +1,6 @@
 //トップコンポーネントはSSRでレンダリングを行うようにする。
 
-import { Box } from "@/components/ui/atoms/Box"
+import { Box } from "@/components/ui/atoms/Box/box"
 import { FeatureSection } from "@/components/ui/organisms/FeatureSection"
 import { HeroSection } from "@/components/ui/organisms/HeroSection/HeroSection"
 import { UsageExampleSection } from "@/components/ui/organisms/UsageExampleSection/UsageExampleSection"

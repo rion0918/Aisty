@@ -10,11 +10,12 @@ import {
   Card,
   CardBody,
 } from "@chakra-ui/react";
-import { Text } from "@/components/ui/atoms/Text";
-import { Heading } from "@/components/ui/atoms/Heading";
-import { Box } from "@/components/ui/atoms/Box";
+import { Text } from "@/components/ui/atoms/Text/text";
+import { Heading } from "@/components/ui/atoms/Heading/heading";
+import { Box } from "@/components/ui/atoms/Box/box";
 import { FiZap, FiCamera } from "react-icons/fi";
 import { TbShirt } from "react-icons/tb";
+import NextLink from "next/link";
 
 const Video = chakra("video");
 
@@ -194,12 +195,23 @@ export const HeroSection = () => {
                   style={{ marginBottom: "16px" }}
                 />
                 <Heading size="md" color="white" mb={3}>
-                  今すぐ無料で体験
+                  今すぐ
+                  <Box
+                    as="span"
+                    bgGradient="linear(to-r, teal.300, purple.300)"
+                    bgClip="text"
+                    display="inline"
+                  >
+                    AiSty
+                  </Box>
+                  を使う
                 </Heading>
                 <Text fontSize="sm" color="gray.300" mb={6}>
-                  3分で完了。登録不要で即座に試着体験
+                  登録するとすぐに使える！
                 </Text>
                 <Button
+                  as={NextLink}
+                  href="/sign-in"
                   colorScheme="teal"
                   size="lg"
                   width="full"

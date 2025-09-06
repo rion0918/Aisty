@@ -15,15 +15,14 @@ import {
   DrawerBody,
 } from "@chakra-ui/react";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-import { Button } from "@/components/ui/atoms/Button";
-import { Box } from "@/components/ui/atoms/Box";
-import { Heading } from "@/components/ui/atoms/Heading";
-import { Image } from "@/components/ui/atoms/Image";
-import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/atoms/Button/button";
+import { Box } from "@/components/ui/atoms/Box/box";
+import { Heading } from "@/components/ui/atoms/Heading/heading";
+import { Image } from "@/components/ui/atoms/Image/image";
+import NextLink from "next/link";
 import { FiMenu } from "react-icons/fi";
 
 export const Header = () => {
-  const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -80,6 +79,8 @@ export const Header = () => {
           <SignedOut>
             <Flex gap={3} alignItems="center">
               <Button
+                as={NextLink}
+                href="/sign-in"
                 variant="ghost"
                 color="gray.300"
                 size="md"
@@ -94,11 +95,12 @@ export const Header = () => {
                 borderColor="rgba(255, 255, 255, 0.2)"
                 backdropFilter="blur(10px)"
                 transition="all 0.2s ease"
-                onClick={() => router.push("/sign-in")}
               >
                 ログイン
               </Button>
               <Button
+                as={NextLink}
+                href="/sign-up"
                 bgGradient="linear(to-r, teal.500, teal.400)"
                 color="white"
                 size="md"
@@ -111,7 +113,6 @@ export const Header = () => {
                 }}
                 boxShadow="0 4px 15px rgba(56, 178, 172, 0.2)"
                 transition="all 0.2s ease"
-                onClick={() => router.push("/sign-up")}
               >
                 新規登録
               </Button>
@@ -154,6 +155,9 @@ export const Header = () => {
           <DrawerBody>
             <VStack spacing={4} align="stretch" pt={4}>
               <Button
+                as={NextLink}
+                href="/sign-in"
+                onClick={onClose}
                 variant="ghost"
                 color="gray.300"
                 size="lg"
@@ -164,14 +168,13 @@ export const Header = () => {
                 }}
                 border="1px solid"
                 borderColor="rgba(255, 255, 255, 0.2)"
-                onClick={() => {
-                  router.push("/sign-in");
-                  onClose();
-                }}
               >
                 ログイン
               </Button>
               <Button
+                as={NextLink}
+                href="/sign-up"
+                onClick={onClose}
                 bgGradient="linear(to-r, teal.500, teal.400)"
                 color="white"
                 size="lg"
@@ -180,10 +183,6 @@ export const Header = () => {
                   bgGradient: "linear(to-r, teal.400, teal.300)",
                 }}
                 boxShadow="0 4px 15px rgba(56, 178, 172, 0.2)"
-                onClick={() => {
-                  router.push("/sign-up");
-                  onClose();
-                }}
               >
                 新規登録
               </Button>

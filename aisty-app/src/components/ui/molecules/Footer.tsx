@@ -1,7 +1,7 @@
 import { Container, VStack, SimpleGrid } from "@chakra-ui/react";
-import { Box } from "@/components/ui/atoms/Box";
-import { Text } from "@/components/ui/atoms/Text";
-import { Heading } from "@/components/ui/atoms/Heading";
+import { Box } from "@/components/ui/atoms/Box/box";
+import { Text } from "@/components/ui/atoms/Text/text";
+import { Heading } from "@/components/ui/atoms/Heading/heading";
 
 export const Footer = () => {
   return (
@@ -17,12 +17,12 @@ export const Footer = () => {
           {/* サービス情報 */}
           <VStack align="start" gap={4}>
             <Heading as="h3" size="md" color="white">
-              AiSty(テスト版)
+              AiSty
             </Heading>
             <Text fontSize="sm" color="gray.400" lineHeight="1.6">
               AIを活用した仮想試着サービス
               <br />
-              あなたにぴったりのスタイルを
+              あなたにぴったりのスタイルを見つけましょう
             </Text>
           </VStack>
 

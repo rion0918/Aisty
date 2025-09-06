@@ -1,7 +1,7 @@
 "use client";
 
-import { Box } from "@/components/ui/atoms/Box";
-import { Heading } from "@/components/ui/atoms/Heading";
+import { Box } from "@/components/ui/atoms/Box/box";
+import { Heading } from "@/components/ui/atoms/Heading/heading";
 import {
   Container,
   Button,
