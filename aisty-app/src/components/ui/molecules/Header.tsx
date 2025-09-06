@@ -17,8 +17,8 @@ import {
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/atoms/Button/button";
 import { Box } from "@/components/ui/atoms/Box/box";
-import { Heading } from "@/components/ui/atoms/Heading/heading";
 import { Image } from "@/components/ui/atoms/Image/image";
+import { Text } from "@/components/ui/atoms/Text/text";
 import NextLink from "next/link";
 import { FiMenu } from "react-icons/fi";
 
@@ -50,24 +50,74 @@ export const Header = () => {
             fit="cover"
             alt="AiSty Logo"
           />
-          <Heading
-            as="h2"
-            size={{ base: "sm", md: "lg" }}
-            color="white"
-            fontWeight="bold"
-            display={{ base: "none", sm: "block" }}
-          >
-            AiSty(開発期間中によりテスト版です)
-          </Heading>
-          <Heading
-            as="h2"
-            size="sm"
-            color="white"
-            fontWeight="bold"
-            display={{ base: "block", sm: "none" }}
-          >
-            AiSty
-          </Heading>
+          <Box display={{ base: "none", sm: "block" }}>
+            <Text
+              as="h2"
+              fontSize={{ base: "xl", md: "2xl" }}
+              fontWeight="bold"
+              transition="all 0.3s ease"
+              _hover={{
+                transform: "scale(1.02)",
+              }}
+              cursor="default"
+              letterSpacing="0.5px"
+            >
+              <Text
+                as="span"
+                fontWeight="extrabold"
+                bgGradient="linear(to-r, #FF6B6B, #4ECDC4)"
+                bgClip="text"
+                textShadow="0 0 20px rgba(255, 107, 107, 0.3)"
+              >
+                AiSty
+              </Text>
+              <Text
+                as="span"
+                fontSize="md"
+                ml={1}
+                bgGradient="linear(to-r, #4ECDC4, #45B7D1)"
+                bgClip="text"
+                textShadow="0 0 15px rgba(78, 205, 196, 0.3)"
+              >
+                -AIであなたのスタイルを彩る
+              </Text>
+              <Text
+                as="span"
+                fontSize="sm"
+                ml={2}
+                color="gray.400"
+                opacity={0.8}
+              >
+                (開発環境)
+              </Text>
+            </Text>
+          </Box>
+          <Box display={{ base: "block", sm: "none" }}>
+            <Box>
+              <Text
+                as="h2"
+                fontSize="xl"
+                fontWeight="extrabold"
+                bgGradient="linear(to-r, #FF6B6B, #4ECDC4)"
+                bgClip="text"
+                textShadow="0 0 15px rgba(255, 107, 107, 0.3)"
+                letterSpacing="1px"
+                lineHeight="1.2"
+              >
+                AiSty
+              </Text>
+              <Text
+                fontSize="sm"
+                bgGradient="linear(to-r, #4ECDC4, #45B7D1)"
+                bgClip="text"
+                textShadow="0 0 10px rgba(78, 205, 196, 0.3)"
+                mt={1}
+                lineHeight="1.2"
+              >
+                AIであなたのスタイルを彩る
+              </Text>
+            </Box>
+          </Box>
         </HStack>
         <Spacer />
 
@@ -145,12 +195,17 @@ export const Header = () => {
         <DrawerOverlay />
         <DrawerContent bg="rgba(0, 0, 0, 0.9)" backdropFilter="blur(20px)">
           <DrawerCloseButton color="white" />
-          <DrawerHeader
-            color="white"
-            borderBottomWidth="1px"
-            borderColor="gray.700"
-          >
-            AiSty
+          <DrawerHeader borderBottomWidth="1px" borderColor="gray.700">
+            <Text
+              fontSize="lg"
+              fontWeight="extrabold"
+              bgGradient="linear(to-r, #FF6B6B, #4ECDC4)"
+              bgClip="text"
+              textShadow="0 0 15px rgba(255, 107, 107, 0.3)"
+              letterSpacing="1px"
+            >
+              AiSty
+            </Text>
           </DrawerHeader>
           <DrawerBody>
             <VStack spacing={4} align="stretch" pt={4}>

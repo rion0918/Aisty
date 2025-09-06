@@ -105,7 +105,9 @@ export const UsageExampleSection = () => {
                       画像をアップロード
                     </Heading>
                     <Text color="gray.400" fontSize="sm">
-                      あなたの全身写真と試着したい衣服の画像をドラッグ&ドロップ
+                      あなたの全身写真と試着したい
+                      <br />
+                      衣服の画像を選択
                     </Text>
                   </VStack>
                 </VStack>
@@ -135,10 +137,12 @@ export const UsageExampleSection = () => {
                       STEP 2
                     </Badge>
                     <Heading size="md" color="white">
-                      AI処理を開始
+                      AI試着を開始
                     </Heading>
                     <Text color="gray.400" fontSize="sm">
-                      ボタンをクリックするだけで、AIが自動的に高品質な試着画像を生成
+                      ボタンをクリックするだけで、
+                      <br />
+                      仮想的に試着ができちゃう！？
                     </Text>
                   </VStack>
                 </VStack>
@@ -171,7 +175,9 @@ export const UsageExampleSection = () => {
                       結果を確認・保存
                     </Heading>
                     <Text color="gray.400" fontSize="sm">
-                      生成された試着画像を確認し、気に入ったらダウンロード保存
+                      試着後の写真を確認
+                      <br />
+                      気に入ったらダウンロード!
                     </Text>
                   </VStack>
                 </VStack>
