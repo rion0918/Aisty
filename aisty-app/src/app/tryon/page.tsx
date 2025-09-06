@@ -573,7 +573,6 @@ export default function TryOnPage() {
                       <Input
                         type="file"
                         accept="image/*"
-                        capture="user"
                         onChange={handleModelImageChange}
                         ref={modelInputRef}
                         display="none"
@@ -685,7 +684,6 @@ export default function TryOnPage() {
                       <Input
                         type="file"
                         accept="image/*"
-                        capture="environment"
                         onChange={handleGarmentImageChange}
                         ref={garmentInputRef}
                         display="none"
