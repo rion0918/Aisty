@@ -28,6 +28,7 @@ import {
   FiZap,
   FiDownload,
   FiRefreshCw,
+  FiTrash2,
 } from "react-icons/fi";
 import { MdDragIndicator } from "react-icons/md";
 import { TbShirt } from "react-icons/tb";
@@ -70,6 +71,8 @@ export default function TryOnPage() {
   const [dragOver, setDragOver] = useState<"model" | "garment" | null>(null);
   const toast = useToast();
   const resultRef = useRef<HTMLDivElement | null>(null);
+  const [deletingIds, setDeletingIds] = useState<string[]>([]);
+  const [deletingAll, setDeletingAll] = useState<boolean>(false);
 
   // Keep a derived image src that can fall back to a proxy if direct load fails
   useEffect(() => {
@@ -108,6 +111,44 @@ export default function TryOnPage() {
       fetchHistory();
     }
   }, [currentStep, fetchHistory]);
+
+  const deleteHistoryItem = async (id: string) => {
+    try {
+      setDeletingIds((prev) => [...prev, id]);
+      const res = await fetch(`/api/history?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("削除に失敗しました");
+      setHistory((prev) => prev.filter((h) => h.id !== id));
+      setSelectedForCompare((prev) => prev.filter((x) => x !== id));
+      toast({ title: "削除しました", status: "success", duration: 2000, isClosable: true });
+    } catch (e) {
+      console.error(e);
+      toast({ title: "削除に失敗しました", status: "error", duration: 3000, isClosable: true });
+    } finally {
+      setDeletingIds((prev) => prev.filter((x) => x !== id));
+    }
+  };
+
+  const deleteAllHistory = async () => {
+    try {
+      if (typeof window !== "undefined") {
+        const ok = window.confirm("本当に履歴をすべて削除しますか？");
+        if (!ok) return;
+      }
+      setDeletingAll(true);
+      const res = await fetch(`/api/history?all=true`, { method: "DELETE" });
+      if (!res.ok) throw new Error("一括削除に失敗しました");
+      setHistory([]);
+      setSelectedForCompare([]);
+      toast({ title: "すべて削除しました", status: "success", duration: 2000, isClosable: true });
+    } catch (e) {
+      console.error(e);
+      toast({ title: "一括削除に失敗しました", status: "error", duration: 3000, isClosable: true });
+    } finally {
+      setDeletingAll(false);
+    }
+  };
 
   const toggleSelect = (id: string) => {
     setSelectedForCompare((prev) => {
@@ -890,9 +931,20 @@ export default function TryOnPage() {
                 <Heading as="h2" size="lg">
                   履歴
                 </Heading>
-                <Text color="gray.500" fontSize="sm">
-                  {history.length} 件
-                </Text>
+                <HStack>
+                  <Text color="gray.500" fontSize="sm">
+                    {history.length} 件
+                  </Text>
+                  <Button
+                    size="sm"
+                    colorScheme="red"
+                    variant="outline"
+                    onClick={deleteAllHistory}
+                    isLoading={deletingAll}
+                  >
+                    すべて削除
+                  </Button>
+                </HStack>
               </HStack>
 
               {historyLoading ? (
@@ -938,6 +990,21 @@ export default function TryOnPage() {
                               <Text fontSize="xs" color="gray.500">
                                 {item.label ?? "—"}
                               </Text>
+                            </HStack>
+                            <HStack justify="flex-end">
+                              <Button
+                                size="xs"
+                                variant="ghost"
+                                colorScheme="red"
+                                leftIcon={<FiTrash2 size={12} />}
+                                isLoading={deletingIds.includes(item.id)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteHistoryItem(item.id);
+                                }}
+                              >
+                                削除
+                              </Button>
                             </HStack>
                             <Text fontSize="xs" color="gray.400">
                               {new Date(item.created_at).toLocaleString()}

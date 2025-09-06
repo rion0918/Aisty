@@ -46,6 +46,29 @@
   - ログイン済みのユーザーがトップページ (`/`) にアクセスすると、自動で`/tryon`にリダイレクトされます。
   - ロジックは `src/middleware.ts` でやっています。
 
+## 🔒 プライバシー: 履歴の削除と自動パージ
+
+本サービスでは、ユーザー自身による履歴削除と、プライバシー配慮のための「3 日後に自動削除」を提供します。
+
+- ユーザー削除: Try-on ページの履歴カードに「削除」ボタンと「すべて削除」ボタンを用意しています。
+  - API: `DELETE /api/history?id=<row_id>` または `DELETE /api/history?all=true`
+- 自動削除（3 日）: `GET /api/history/purge` をスケジュール実行します。
+  - 削除対象: `tryon_history.created_at` が実行時点から 3 日以上前の行（`<= 3日`）
+  - 実装: `aisty-app/src/app/api/history/purge/route.ts`
+
+### 有効化手順（本番環境）
+
+1. 環境変数の設定
+
+- `CRON_SECRET`: 任意の長いランダム文字列を設定（例: `openssl rand -hex 32`）。
+
+2. スケジューラ設定（例: Vercel Cron）
+
+- スケジュール（例）: 毎日 03:00 JST → `0 18 * * *`（UTC 基準。JST は UTC+9）
+- エンドポイント: `GET /api/history/purge?key=<CRON_SECRET>`
+  - Vercel Cron はカスタムヘッダを付けられないため、`?key=...` のクエリで共有秘密鍵を渡します。
+- 期待レスポンス: `{ deleted: <削除件数>, before: <しきい値ISO> }`
+
 ## 🗺️ 今後のロードマップ
 
 - [ ] `TryOn`ページの UI/UX 改善
