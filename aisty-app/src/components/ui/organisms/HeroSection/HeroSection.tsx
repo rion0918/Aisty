@@ -172,7 +172,7 @@ export const HeroSection = () => {
                     style={{ marginBottom: "8px" }}
                   />
                   <Heading size="lg" color="white" mb={1}>
-                    50K+
+                    62回
                   </Heading>
                   <Text fontSize="sm" color="gray.400">
                     試着回数

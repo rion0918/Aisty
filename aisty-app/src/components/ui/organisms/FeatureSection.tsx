@@ -33,7 +33,7 @@ export const FeatureSection = () => {
 
             <VStack spacing={2}>
               <Heading size="2xl" color="purple.300">
-                39回
+                62回
               </Heading>
               <Text color="gray.400">試着回数</Text>
             </VStack>
